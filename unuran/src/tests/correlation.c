@@ -227,8 +227,8 @@ unur_test_cvec_rankcorr( double *rc, struct unur_gen *gen, int samplesize, int v
     marginals[i] = DISTR.marginals[i];
     marginal_cdf[i] = unur_distr_cont_get_cdf(DISTR.marginals[i]);
     if (marginals[i]==NULL || marginal_cdf[i]==NULL) {
-      _unur_error(gen->distr->name,UNUR_ERR_DISTR_REQUIRED,"CDF of continuous marginal");
       free (marginals);  free (marginal_cdf);
+      _unur_error(gen->distr->name,UNUR_ERR_DISTR_REQUIRED,"CDF of continuous marginal");
       return UNUR_ERR_DISTR_REQUIRED; }
   }
 

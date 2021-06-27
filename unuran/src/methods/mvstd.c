@@ -263,8 +263,9 @@ _unur_mvstd_init( struct unur_par *par )
   /* run special init routine for generator */
   if ( DISTR.init(gen)!=UNUR_SUCCESS ) {
     /* init failed --> could not find a sampling routine */
+    _unur_mvstd_free(gen);
     _unur_error(GENTYPE,UNUR_ERR_GEN_DATA,"variant for special generator");
-    _unur_mvstd_free(gen); return NULL; 
+    return NULL; 
   }
 
   /* check parameters */

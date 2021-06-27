@@ -866,8 +866,10 @@ _unur_ars_init( struct unur_par *par )
 
   /* is there any hat at all ? */
   if (GEN->Atotal <= 0. || !_unur_isfinite(GEN->Atotal)) {
-    _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"bad construction points.");
+    char genid[256];
+    strcpy(genid, gen->genid);
     _unur_ars_free(gen);
+    _unur_error(genid,UNUR_ERR_GEN_DATA,"bad construction points.");
     return NULL;
   }
 
@@ -1853,8 +1855,8 @@ _unur_ars_starting_intervals( struct unur_gen *gen )
       }
 
       else {
+  free(iv_new);
 	_unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF not T-concave!");
-	free(iv_new);
 	return UNUR_ERR_GEN_CONDITION;
       }
     }

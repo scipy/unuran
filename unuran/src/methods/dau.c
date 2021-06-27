@@ -720,8 +720,8 @@ _unur_dau_make_urntable( struct unur_gen *gen )
   if (rich == begin + GEN->urn_size + 1 ) {
     /* this must not happen:
        no rich strips found for Robin Hood algorithm. */
-    _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     free (begin);
+    _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_ERR_SHOULD_NOT_HAPPEN;
   }
 

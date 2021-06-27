@@ -252,8 +252,8 @@ unur_test_count_pdf( struct unur_gen *gen, int samplesize, int verbosity, FILE *
     }
     break;
   default: /* unknown ! */
-    _unur_error(test_name,UNUR_ERR_GENERIC,"cannot run test for method!");
     _unur_free(genclone);
+    _unur_error(test_name,UNUR_ERR_GENERIC,"cannot run test for method!");
     return -1;
   }
 

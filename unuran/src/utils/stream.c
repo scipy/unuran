@@ -282,8 +282,8 @@ _unur_read_data( const char *filename, int no_of_entries, double **ar )
   /* open the file with the data */
   fp = fopen(filename, "r");
   if (fp == NULL) {
-    _unur_error("read_data",UNUR_ERR_GENERIC,"cannot open file");
     free(data);
+    _unur_error("read_data",UNUR_ERR_GENERIC,"cannot open file");
     return 0; 
   }
 
@@ -314,9 +314,9 @@ _unur_read_data( const char *filename, int no_of_entries, double **ar )
 
       /* no success reading a double */
       if (chktoline == toline) {
-	_unur_error("read_data",UNUR_ERR_GEN_DATA,"data file not valid");
-	free(data);
+  free(data);
 	fclose(fp);
+	_unur_error("read_data",UNUR_ERR_GEN_DATA,"data file not valid");
 	return 0;    /* terminate routine */
       }  
 

@@ -514,8 +514,9 @@ unur_distr_burr( const double *params, int n_params )
   case 11:  distr->id = UNUR_DISTR_BURR_XI;   break;
   case 12:  distr->id = UNUR_DISTR_BURR_XII;  break;
   default:
+    free( distr );
     _unur_error(distr_name,UNUR_ERR_DISTR_DOMAIN,"type < 1 || type > 12");
-    free( distr ); return NULL;
+    return NULL;
   }
 
   /* name of distribution */

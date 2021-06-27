@@ -543,9 +543,9 @@ unur_str2gen (const char *string)
       str_urng = token;
     }
     else {
-      _unur_error_unknown(token,"category");
       _unur_slist_free( mlist );
       if (str) free(str);
+      _unur_error_unknown(token,"category");
       return NULL;
     }
   }
@@ -957,16 +957,16 @@ _unur_str_distr( char *str_distr )
       }
       else {
 	if (*key != 'd') {
-	  _unur_error(GENTYPE,UNUR_ERR_STR_SYNTAX,"key for distribution does not start with 'd'"); 
-	  _unur_distr_free(distr);  /* remark: added for ROOT to make coverity integrity manager happy */ 
+    _unur_distr_free(distr);  /* remark: added for ROOT to make coverity integrity manager happy */
+	  _unur_error(GENTYPE,UNUR_ERR_STR_SYNTAX,"key for distribution does not start with 'd'");  
 	  return NULL;
 	}
       }
 
       /* get new distribution object */
       if (distr != NULL) {
+  _unur_distr_free(distr);
 	_unur_error(GENTYPE,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-	_unur_distr_free(distr);
       }
 
       distr = _unur_str_distr_new(value);
@@ -1196,8 +1196,8 @@ _unur_str_distr_set_ii (UNUR_DISTR *distr, const char *key, char *type_args, cha
   /* or one list with 2 entries is given */
   else if ( !strcmp(type_args, "L") ) {
     if ( _unur_parse_ilist( args[0], &iarray ) < 2 ) {
-      _unur_error_args(key);
       free (iarray);
+      _unur_error_args(key);
 #ifdef UNUR_ENABLE_LOGGING
       /* write info into LOG file */
       if (_unur_default_debugflag & UNUR_DEBUG_SETUP)
@@ -1342,8 +1342,8 @@ _unur_str_distr_set_dd (UNUR_DISTR *distr, const char *key, char *type_args, cha
   /* or one list with 2 entries is given */
   else if ( !strcmp(type_args, "L") ) {
     if ( _unur_parse_dlist( args[0], &darray ) < 2 ) {
-      _unur_error_args(key);
       free (darray);
+      _unur_error_args(key);
 #ifdef UNUR_ENABLE_LOGGING
       /* write info into LOG file */
       if (_unur_default_debugflag & UNUR_DEBUG_SETUP)
@@ -1767,8 +1767,8 @@ _unur_str_par_set_ii (UNUR_PAR *par, const char *key, char *type_args, char **ar
   /* or one list with 2 entries is given */
   else if ( !strcmp(type_args, "L") ) {
     if ( _unur_parse_ilist( args[0], &iarray ) < 2 ) {
-      _unur_error_args(key);
       free (iarray);
+      _unur_error_args(key);
 #ifdef UNUR_ENABLE_LOGGING
       /* write info into LOG file */
       if (_unur_default_debugflag & UNUR_DEBUG_SETUP)
@@ -1969,8 +1969,8 @@ _unur_str_par_set_dd (UNUR_PAR *par, const char *key, char *type_args, char **ar
   /* or one list with 2 entries is given */
   else if ( !strcmp(type_args, "L") ) {
     if ( _unur_parse_dlist( args[0], &darray ) < 2 ) {
-      _unur_error_args(key);
       free (darray);
+      _unur_error_args(key);
 #ifdef UNUR_ENABLE_LOGGING
       /* write info into LOG file */
       if (_unur_default_debugflag & UNUR_DEBUG_SETUP)
@@ -2826,8 +2826,10 @@ _unur_str_error_unknown( const char *file, int line, const char *key, const char
 {
   struct unur_string *reason = _unur_string_new();
   _unur_string_append( reason, "unknown %s: '%s'", type, key );
-  _unur_error_x( GENTYPE, file, line, "error", UNUR_ERR_STR_UNKNOWN,reason->text);
+  char reason_text[256];
+  strcpy(reason_text, reason->text);
   _unur_string_free( reason );
+  _unur_error_x( GENTYPE, file, line, "error", UNUR_ERR_STR_UNKNOWN,reason_text);
 } /* end of _unur_str_error_unknown() */
 
 /*---------------------------------------------------------------------------*/
@@ -2846,8 +2848,10 @@ _unur_str_error_invalid( const char *file, int line, const char *key, const char
 {
   struct unur_string *reason = _unur_string_new();
   _unur_string_append( reason, "invalid data for %s '%s'", type, key );
-  _unur_error_x( GENTYPE, file, line, "error", UNUR_ERR_STR_INVALID,reason->text);
+  char reason_text[256];
+  strcpy(reason_text, reason->text);
   _unur_string_free( reason );
+  _unur_error_x( GENTYPE, file, line, "error", UNUR_ERR_STR_INVALID,reason_text);
 } /* end of _unur_str_error_invalid() */
 
 /*---------------------------------------------------------------------------*/
@@ -2865,8 +2869,10 @@ _unur_str_error_args( const char *file, int line, const char *key )
 {
   struct unur_string *reason = _unur_string_new();
   _unur_string_append( reason, "invalid argument string for '%s'", key );
-  _unur_error_x( GENTYPE, file, line, "error", UNUR_ERR_STR_INVALID,reason->text);
+  char reason_text[256];
+  strcpy(reason_text, reason->text);
   _unur_string_free( reason );
+  _unur_error_x( GENTYPE, file, line, "error", UNUR_ERR_STR_INVALID,reason_text);
 } /* end of _unur_str_error_args() */
 
 /*---------------------------------------------------------------------------*/

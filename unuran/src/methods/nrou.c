@@ -538,8 +538,11 @@ _unur_nrou_init( struct unur_par *par )
 
   /* compute bounding rectangle */
   if (_unur_nrou_rectangle(gen)!=UNUR_SUCCESS) {
-    _unur_error(gen->genid , UNUR_ERR_GEN_CONDITION, "Cannot compute bounding rectangle");  
-    _unur_nrou_free(gen); return NULL;
+    char genid[256];
+    strcpy(genid, gen->genid);
+    _unur_nrou_free(gen);
+    _unur_error(genid , UNUR_ERR_GEN_CONDITION, "Cannot compute bounding rectangle");  
+    return NULL;
   }
 
 #ifdef UNUR_ENABLE_LOGGING

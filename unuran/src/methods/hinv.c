@@ -1455,8 +1455,8 @@ _unur_hinv_interval_new( struct unur_gen *gen, double p, double u )
     iv->u = u;
     break;
   default:
-    _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     free(iv);
+    _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return NULL;
   }
 

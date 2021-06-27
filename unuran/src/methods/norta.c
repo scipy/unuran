@@ -320,8 +320,11 @@ _unur_norta_init( struct unur_par *par )
   if ( gen->distr->set & UNUR_DISTR_SET_DOMAINBOUNDED ) {
     if ( DISTR.domainrect == NULL ) {
       /* cannot handle non-rectangular domain */
-      _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot handle non-rectangular domain");
-      _unur_norta_free(gen); return NULL;
+      char genid[256];
+      strcpy(genid, gen->genid);
+      _unur_norta_free(gen);
+      _unur_error(genid,UNUR_ERR_GEN_CONDITION,"cannot handle non-rectangular domain");
+      return NULL;
     }
     else { /* rectangular domain */
       if (_unur_distr_cvec_marginals_are_equal(DISTR.marginals, GEN->dim)) {
@@ -393,8 +396,10 @@ _unur_norta_init( struct unur_par *par )
 
     /* verify initialization of marginal generators */
     if (GEN->marginalgen_list == NULL) {
-      _unur_error(gen->genid,UNUR_ERR_GENERIC,"init of marginal generators failed");
+      char genid[256];
+      strcpy(genid, gen->genid);
       _unur_norta_free(gen);
+      _unur_error(genid,UNUR_ERR_GENERIC,"init of marginal generators failed");
       return NULL;
     }
   }
@@ -639,8 +644,8 @@ _unur_norta_nortu_setup( struct unur_gen *gen )
   eigenvalues = _unur_xmalloc(dim * sizeof(double));
   eigenvectors = _unur_xmalloc(dim * dim * sizeof(double));
   if (_unur_matrix_eigensystem(dim, sigma_y, eigenvalues, eigenvectors) != UNUR_SUCCESS) {
-    _unur_error(GENTYPE,UNUR_ERR_GEN_DATA,"cannot compute eigenvalues for given sigma_y");
     free(sigma_y); free(eigenvalues); free(eigenvectors);
+    _unur_error(GENTYPE,UNUR_ERR_GEN_DATA,"cannot compute eigenvalues for given sigma_y");
     return UNUR_ERR_GEN_DATA;
   }
 
@@ -683,8 +688,8 @@ _unur_norta_nortu_setup( struct unur_gen *gen )
     _unur_distr_free(mn_distr);
   }
   if (mn_gen == NULL) {
-    _unur_error(GENTYPE,UNUR_ERR_GEN_DATA,"(corrected) sigma_y not positive definit");
     free(sigma_y);
+    _unur_error(GENTYPE,UNUR_ERR_GEN_DATA,"(corrected) sigma_y not positive definit");
     return UNUR_ERR_GEN_DATA;
   }
   MNORMAL = mn_gen;

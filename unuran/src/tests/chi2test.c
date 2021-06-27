@@ -348,8 +348,8 @@ _unur_test_chi2_cont( struct unur_gen *gen,
 
   /* Fr - Fl <= 0. is a fatal error */
   if (Fdelta <= 0.) {
-    _unur_error(gen->genid,UNUR_ERR_GENERIC,"Fdelta <= 0.");
     free (observed);
+    _unur_error(gen->genid,UNUR_ERR_GENERIC,"Fdelta <= 0.");
     return -1.;
   }
 
@@ -604,8 +604,20 @@ _unur_test_chi2_vec ( struct unur_gen *gen,
     marginals[i] = DISTR.marginals[i];
     marginal_cdf[i] = unur_distr_cont_get_cdf(DISTR.marginals[i]);
     if (marginals[i]==NULL || marginal_cdf[i]==NULL) {
+      /* free memory */
+      if (X)    free(X);
+      if (U)    free(U);
+      if (bm)   free(bm);
+      if (Linv) free(Linv);
+      if (marginals)  free (marginals);
+      if (marginal_cdf)  free (marginal_cdf);
+      if (Fl)   free(Fl);
+      if (Fr)   free(Fr);
+      if (Fdelta)   free(Fdelta);
       _unur_error(gen->distr->name,UNUR_ERR_DISTR_REQUIRED,"CDF of continuous standardized marginal");
-      pval_min = -2.; goto free_memory;
+      pval_min = -2.;
+      /* return result of test */
+      return pval_min * dim;
     }
   }
 
@@ -622,8 +634,20 @@ _unur_test_chi2_vec ( struct unur_gen *gen,
       Fdelta[i] = Fr[i] - Fl[i];
       /* Fr - Fl <= 0. is a fatal error */
       if (Fdelta[i] <= 0.) {
+  /* free memory */
+  if (X)    free(X);
+  if (U)    free(U);
+  if (bm)   free(bm);
+  if (Linv) free(Linv);
+  if (marginals)  free (marginals);
+  if (marginal_cdf)  free (marginal_cdf);
+  if (Fl)   free(Fl);
+  if (Fr)   free(Fr);
+  if (Fdelta)   free(Fdelta);
 	_unur_error(gen->genid,UNUR_ERR_GENERIC,"Fdelta <= 0.");
-	pval_min = -1.; goto free_memory;
+	pval_min = -1.;
+  /* return result of test */
+  return pval_min * dim;
       }
     }
   }
@@ -645,8 +669,20 @@ _unur_test_chi2_vec ( struct unur_gen *gen,
   if (L != NULL) {
     Linv  = _unur_xmalloc( dim * dim * sizeof(double));
     if (_unur_matrix_invert_matrix (dim, L, Linv, &Linv_det) != UNUR_SUCCESS) {
+      /* free memory */
+      if (X)    free(X);
+      if (U)    free(U);
+      if (bm)   free(bm);
+      if (Linv) free(Linv);
+      if (marginals)  free (marginals);
+      if (marginal_cdf)  free (marginal_cdf);
+      if (Fl)   free(Fl);
+      if (Fr)   free(Fr);
+      if (Fdelta)   free(Fdelta);
       _unur_error(test_name,UNUR_ERR_DISTR_DATA,"cannot compute inverse of Cholesky factor");
-      pval_min = -2.; goto free_memory;
+      pval_min = -2.;
+      /* return result of test */
+      return pval_min * dim;
     }
   }
 
@@ -698,7 +734,6 @@ _unur_test_chi2_vec ( struct unur_gen *gen,
 
   /* ----------------------------------------------------------------------------*/
 
-free_memory:
   /* free memory */
   if (X)    free(X);
   if (U)    free(U);
@@ -949,6 +984,7 @@ _unur_test_chi2test( double *prob,
     pval = 1. - _unur_cont_CDF( chi2, distr_chisquare );
   }
   else {
+    _unur_distr_free(distr_chisquare);
     _unur_error(test_name,UNUR_ERR_GENERIC,"CDF for CHI^2 distribution required");
     pval = -2.;
   }
