@@ -12,7 +12,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2009 Wolfgang Hoermann and Josef Leydold                  *
+ *   Copyright (c) 2009-2011 Wolfgang Hoermann and Josef Leydold             *
  *   Department of Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -62,7 +62,8 @@ static double
 _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 			  double x, double h, double tol, UNUR_LOBATTO_ERROR uerror,
 			  double int1, double fl, double fr, double fc,
-			  int *W_accuracy, struct unur_lobatto_table *Itable);
+			  int *W_accuracy, int *n_calls,
+			  struct unur_lobatto_table *Itable);
 /*---------------------------------------------------------------------------*/
 /* run recursion for adaptive Lobatto integration.                           */
 /*---------------------------------------------------------------------------*/
@@ -89,6 +90,13 @@ _unur_lobatto_table_resize (struct unur_lobatto_table *Itable);
 
 #define W1 (0.17267316464601146)   /* = 0.5-sqrt(3/28) */
 #define W2 (1.-W1)
+
+/*---------------------------------------------------------------------------*/
+/* emergency break for adaptive Lobatto integration:                         */
+/* abort recursive calls to _unur_lobatto5_recursion() after this number     */
+/* of calls.                                                                 */
+
+#define LOBATTO_MAX_CALLS (1000000)
 
 /*---------------------------------------------------------------------------*/
 
@@ -177,7 +185,8 @@ _unur_lobatto5_adaptive (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 {
   double fl, fc, fr;  /* values of PDF at x, x+h/2, and x+h */
   double int1, int2;  /* estimated values for integral */
-  int W_accuracy = FALSE; /* raise flag for printing warning about accuracy */
+  int W_accuracy = 0; /* raise flag for printing warning about accuracy */
+  int n_calls = 0;    /* number of recursive calls */
 
   /* check length of interval */
   if (_unur_iszero(h))
@@ -186,7 +195,7 @@ _unur_lobatto5_adaptive (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
   /* arguments which are not finite (inf or NaN) cause infinite recursions */
   if (!_unur_isfinite(x+h)) {
     _unur_error(gen->genid,UNUR_ERR_INF,"boundaries of integration domain not finite");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
   /* compute function values */
@@ -198,12 +207,20 @@ _unur_lobatto5_adaptive (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
   int1 = (9*(fl+fr)+49.*(FKT(x+h*W1)+FKT(x+h*W2))+64*fc)*h/180.;
 
   /* run adaptive steps */
-  int2 = _unur_lobatto5_recursion(funct,gen,x,h,tol,uerror,int1,fl,fc,fr,&W_accuracy,Itable);
+  int2 = _unur_lobatto5_recursion(funct,gen,x,h,tol,uerror,int1,fl,fc,fr,&W_accuracy,&n_calls,Itable);
+
+  /* check warning flag */
+  if (W_accuracy) {
+    if (W_accuracy == 1)
+      _unur_warning(gen->genid,UNUR_ERR_ROUNDOFF,
+		    "numeric integration did not reach full accuracy");
+    else
+      _unur_error(gen->genid,UNUR_ERR_ROUNDOFF,
+		  "adaptive numeric integration aborted (too many function calls)");
+
+  }
 
   /* return result */
-  if (W_accuracy)
-    _unur_warning(gen->genid,UNUR_ERR_ROUNDOFF,
-		  "numeric integration did not reach full accuracy");
   return int2;
 
 } /* end of _unur_lobatto5_adaptive() */
@@ -214,7 +231,8 @@ double
 _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 			  double x, double h, double tol, UNUR_LOBATTO_ERROR uerror,
 			  double int1, double fl, double fc, double fr,
-			  int *W_accuracy, struct unur_lobatto_table *Itable)
+			  int *W_accuracy, int *n_calls,
+			  struct unur_lobatto_table *Itable)
      /*----------------------------------------------------------------------*/
      /* run recursion for adaptive Lobatto integration.                      */
      /*                                                                      */
@@ -228,6 +246,7 @@ _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
      /*   fc       ... PDF at x+h/2                                          */
      /*   fr       ... PDF at x+h                                            */
      /*   W_accuracy.. warning about accuracy                                */
+     /*   n_calls  ... number of recursive calls                             */
      /*   Itable   ... table for storing integral values (may be NULL)       */
      /*                                                                      */
      /* return:                                                              */
@@ -238,6 +257,15 @@ _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
   double int2;        /* estimated values of integrals */
   double intl, intr;  /* left and right part of int2 */
   double ierror;      /* integration error */
+
+  /* First check number of recursive calls */
+  if (++(*n_calls) > LOBATTO_MAX_CALLS) {
+    /* maximum allowed number of calls exceeded.       */
+    /* Remark: this may happen, when the initial guess */
+    /*         for the integral is too small.          */
+    *W_accuracy = 2;
+    return UNUR_INFINITY;
+  }
 
   /* compute function values */
   flc = FKT(x+h/4);
@@ -260,7 +288,7 @@ _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
     /* if (_unur_FP_equal(x+h/2.,x) || _unur_FP_equal(int1,int2) ) { */
     if (_unur_FP_equal(x+h/2.,x)) {
       /* we cannot decrease length of subintervals any more */
-      *W_accuracy = TRUE;
+      *W_accuracy = 1;
       /* Remark: Since we are halving intervals, this comparision */
       /* limits the maximal number of iterations to at most 2048. */
     }
@@ -274,9 +302,9 @@ _unur_lobatto5_recursion (UNUR_LOBATTO_FUNCT funct, struct unur_gen *gen,
 	 revert this order.
        */
       int2  = _unur_lobatto5_recursion(funct,gen,x,h/2,tol/1.,uerror,
-				      intl,fl,flc,fc, W_accuracy,Itable);
+				       intl,fl,flc,fc, W_accuracy,n_calls, Itable);
       int2 += _unur_lobatto5_recursion(funct,gen,x+h/2,h/2,tol/1.,uerror,
-				       intr,fc,frc,fr, W_accuracy,Itable);
+				       intr,fc,frc,fr, W_accuracy,n_calls, Itable);
       return int2;
     }
   }
@@ -336,7 +364,7 @@ _unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h, 
 #define clear_fx() if(fx!=NULL){*fx=-1.;}
 
   /* check for invalid NULL pointer */
-  CHECK_NULL(Itable,INFINITY);
+  CHECK_NULL(Itable,UNUR_INFINITY);
 
   /* read data from table */
   values = Itable->values;
@@ -346,7 +374,7 @@ _unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h, 
   if (!_unur_isfinite(x+h)) {
     /* _unur_warning(gen->genid,UNUR_ERR_INF,"boundaries of integration domain not finite"); */
     clear_fx();
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
   /* check for boundaries of integration table */
@@ -423,18 +451,14 @@ _unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, double h, 
 double
 _unur_lobatto_eval_CDF (struct unur_lobatto_table *Itable, double x)
      /*----------------------------------------------------------------------*/
-     /* Numerical integration of 'funct' over the interval (-INFINITY, x)    */
+     /* Numerical integration of 'funct' over the interval (-UNUR_INFINITY,x)*/
      /* using a table of integral values together with                       */
      /* (adaptive) Gauss-Lobatto integration with 5 points.                  */
      /* It is important, that the integration object 'Itable' already exists.*/
      /*                                                                      */
      /* parameters:                                                          */
      /*   Itable ... table for storing integral values (may be NULL)         */
-     /*   x      ... left boundary point of interval                         */
-     /*   h      ... length of interval                                      */
-     /*   fx     ... funct(x) (ignored if NULL or *fx<0)                     */
-     /*              set *fx <- funct(x+h) if _unur_lobatto5_simple called   */
-     /*              set *fx <- -1.        otherwise                         */
+     /*   x      ... argument                                                */
      /*                                                                      */
      /* return:                                                              */
      /*   integral                                                           */
@@ -442,13 +466,13 @@ _unur_lobatto_eval_CDF (struct unur_lobatto_table *Itable, double x)
 {
   struct unur_lobatto_nodes *values;
   int n_values;          /* table size */
-  double area;           /* integral over (-INFINITY, INFINITY) */
+  double area;           /* integral over (-UNUR_INFINITY, UNUR_INFINITY) */
   double xr;             /* most right point from table */
   double cdf;            /* cdf at x */
   int cur;               /* current interval (position in table) */
 
   /* check for invalid NULL pointer */
-  CHECK_NULL(Itable,INFINITY);
+  CHECK_NULL(Itable, UNUR_INFINITY);
 
   /* check boundary */
   if (x <= Itable->bleft)  return 0.;
@@ -462,7 +486,7 @@ _unur_lobatto_eval_CDF (struct unur_lobatto_table *Itable, double x)
   /* the area must not equal 0 (this should not happen anyway) */
   if (area <= 0.) {
     _unur_error(Itable->gen->genid,UNUR_ERR_NAN,"area below PDF 0.");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
   /* sum values over all intervals that are on the l.h.s. of x */
@@ -507,7 +531,7 @@ _unur_lobatto_integral (struct unur_lobatto_table *Itable)
      /*   integral                                                           */
      /*----------------------------------------------------------------------*/
 {
-  CHECK_NULL(Itable,INFINITY);
+  CHECK_NULL(Itable, UNUR_INFINITY);
   return Itable->integral;
 } /* end of _unur_lobatto_eval_integral() */
 
@@ -720,7 +744,7 @@ _unur_lobatto_debug_table (struct unur_lobatto_table *Itable, const struct unur_
 	  Itable->n_values - 1);
 
   for (n=0; print_Itable && n < Itable->n_values; n++) {
-    fprintf(LOG,"%s:  [%3d] x = %g, u = %g\n",gen->genid,
+    fprintf(LOG,"%s:  [%3d] x = %.16g, u = %.16g\n",gen->genid,
 	    n, Itable->values[n].x, Itable->values[n].u );
   }
 

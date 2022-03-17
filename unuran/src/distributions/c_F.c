@@ -52,7 +52,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -100,7 +99,7 @@ _unur_pdf_F(double x, const UNUR_DISTR *distr)
 
   else if (_unur_iszero(x)) {
     if (nua < 2.)
-      return INFINITY;
+      return UNUR_INFINITY;
     else if (_unur_isfsame(nua,2.))
       return exp(-LOGNORMCONSTANT);
     else
@@ -121,15 +120,15 @@ _unur_logpdf_F(double x, const UNUR_DISTR *distr)
 
   if (x < 0.)
     /* out of support */
-    return -INFINITY;
+    return -UNUR_INFINITY;
 
   else if (_unur_iszero(x)) {
     if (nua < 2.)
-      return INFINITY;
+      return UNUR_INFINITY;
     else if (_unur_isfsame(nub,2.))
       return -LOGNORMCONSTANT;
     else
-      return -INFINITY;
+      return -UNUR_INFINITY;
   }
 
   else 
@@ -150,7 +149,7 @@ _unur_dpdf_F(double x, const UNUR_DISTR *distr)
 
   else if (_unur_iszero(x)) {
     if (nua < 2.)
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else if (_unur_isfsame(nub,2.))
       return -(2.+nub)/nub * exp(-LOGNORMCONSTANT);
     else
@@ -175,11 +174,11 @@ _unur_dlogpdf_F(double x, const UNUR_DISTR *distr)
 
   else if (_unur_iszero(x)) {
     if (nua < 2.)
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else if (_unur_isfsame(nub,2.))
       return -(2.+nub)/nub;
     else
-      return INFINITY;
+      return UNUR_INFINITY;
   }
 
   else
@@ -298,8 +297,8 @@ _unur_set_params_F( UNUR_DISTR *distr, const double *params, int n_params )
 
   /* set (standard) domain */
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = 0.;          /* left boundary  */
-    DISTR.domain[1] = INFINITY;    /* right boundary */
+    DISTR.domain[0] = 0.;            /* left boundary  */
+    DISTR.domain[1] = UNUR_INFINITY; /* right boundary */
   }
 
   return UNUR_SUCCESS;

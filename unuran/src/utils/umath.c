@@ -39,7 +39,30 @@
 /* If the macro INFINITY is not already defined we store infinity in the     */
 /* global variable INFINITY.                                                 */
 #ifndef INFINITY
-const double INFINITY = 1.0 / 0.0;
+
+#  if defined(HAVE_DECL_HUGE_VAL)
+
+      const double INFINITY = HUGE_VAL;
+
+#  elif defined(HAVE_DIVIDE_BY_ZERO)
+
+      const double INFINITY = 1.0 / 0.0;
+
+#  elif defined(HAVE_DECL_DBL_MAX)
+
+      const double INFINITY = DBL_MAX;
+
+#  else
+
+#     error
+#     error +--------------------------------------------+
+#     error ! Sorry, Cannot define INFINITY correctly!.. !
+#     error ! Please contact <unuran@statmath.wu.ac.at>. !
+#     error +--------------------------------------------+
+#     error
+
+#  endif
+
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -75,8 +98,8 @@ _unur_arcmean( double x0, double x1 )
     /* use harmonic mean */
     return (2./(1./x0 + 1./x1));
 
-  a0 = (x0<=-INFINITY) ? -M_PI/2. : atan(x0);
-  a1 = (x1>= INFINITY) ?  M_PI/2. : atan(x1);
+  a0 = (x0<=-UNUR_INFINITY) ? -M_PI/2. : atan(x0);
+  a1 = (x1>= UNUR_INFINITY) ?  M_PI/2. : atan(x1);
 
   if (fabs(a0-a1) < ARCMEAN_ARITHMETIC)
     /* use arithmetic mean */

@@ -116,7 +116,7 @@ unur_sample_discr( struct unur_gen *gen )
 double
 unur_sample_cont( struct unur_gen *gen )
 {
-  CHECK_NULL(gen,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
   return (gen->sample.cont(gen));
 } /* end of unur_sample_cont() */
 
@@ -185,13 +185,13 @@ unur_quantile ( struct unur_gen *gen, double U )
 /*---------------------------------------------------------------------------*/
 
 int
-_unur_gen_is_inversion ( struct unur_gen *gen )
+unur_gen_is_inversion ( const struct unur_gen *gen )
      /*----------------------------------------------------------------------*/
      /* check for type of generator object                                   */
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
-  CHECK_NULL(gen,FALSE);
+  if (gen==NULL) return FALSE;
 
   switch (gen->method) {
   case UNUR_METH_HINV:
@@ -209,7 +209,7 @@ _unur_gen_is_inversion ( struct unur_gen *gen )
   default:
     return FALSE;
   }
-} /* end of _unur_gen_is_inversion() */
+} /* end of unur_gen_is_inversion() */
 
 /*---------------------------------------------------------------------------*/
 /* aux routines when no sampling routine is available                         */
@@ -225,7 +225,7 @@ double
 _unur_sample_cont_error( struct unur_gen *gen ATTRIBUTE__UNUSED )
 {
   unur_errno = UNUR_ERR_GEN_CONDITION;
-  return INFINITY;
+  return UNUR_INFINITY;
 } /* end of _unur_sample_cont_error() */
 
 int
@@ -233,7 +233,7 @@ _unur_sample_cvec_error( struct unur_gen *gen, double *vec )
 { 
   int d;
   unur_errno = UNUR_ERR_GEN_CONDITION;
-  for (d=0; d<(gen->distr->dim); d++) vec[d] = INFINITY;
+  for (d=0; d<(gen->distr->dim); d++) vec[d] = UNUR_INFINITY;
   return UNUR_FAILURE;
 } /* end of _unur_sample_cvec_error() */
 
@@ -246,7 +246,7 @@ _unur_sample_matr_error( struct unur_gen *gen, double *mat )
   unur_distr_matr_get_dim(gen->distr, &n_rows, &n_cols );
   dim = n_rows * n_cols;
   for (j=0; j<dim; j++)
-    mat[j] = INFINITY;
+    mat[j] = UNUR_INFINITY;
   return UNUR_FAILURE;
 } /* end of _unur_sample_matr_error() */
 
@@ -330,10 +330,7 @@ unur_get_dimension( const struct unur_gen *gen )
      /*   return 0                                                           */
      /*----------------------------------------------------------------------*/
 {
-  /* check arguments */
-  CHECK_NULL(gen,0);
-
-  return (gen->distr->dim);
+  return ((gen) ? gen->distr->dim : 0);
 } /* end of unur_get_dimension() */
 
 /*---------------------------------------------------------------------------*/
@@ -353,11 +350,28 @@ unur_get_genid( const struct unur_gen *gen )
      /*   return NULL                                                        */
      /*----------------------------------------------------------------------*/
 {
-  /* check arguments */
-  CHECK_NULL(gen,NULL);
-
-  return gen->genid;
+  return ((gen) ? gen->genid : NULL);
 } /* end of unur_get_genid() */
+
+/*---------------------------------------------------------------------------*/
+
+unsigned int
+unur_get_method( const struct unur_gen *gen )
+     /*----------------------------------------------------------------------*/
+     /* get identifier for generating method.                                */
+     /*                                                                      */
+     /* parameters:                                                          */
+     /*   gen ... pointer to generator object                                */
+     /*                                                                      */
+     /* return:                                                              */
+     /*   ID for method (see unur_method.h)                                  */
+     /*                                                                      */
+     /* error:                                                               */
+     /*   return 0U                                                          */
+     /*----------------------------------------------------------------------*/
+{
+  return ((gen) ? gen->method : 0U);
+} /* end of unur_get_method() */
 
 /*---------------------------------------------------------------------------*/
 
@@ -376,10 +390,7 @@ unur_get_distr( const struct unur_gen *gen )
      /*   return NULL                                                        */
      /*----------------------------------------------------------------------*/
 {
-  /* check arguments */
-  CHECK_NULL(gen,NULL);
-
-  return gen->distr;
+  return ((gen) ? gen->distr : NULL);
 } /* end of unur_get_distr() */
 
 /*---------------------------------------------------------------------------*/

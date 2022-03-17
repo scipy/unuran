@@ -49,7 +49,7 @@ _unur_tabl_rh_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   UNUR_URNG *urng;             /* pointer to uniform random number generator */
@@ -57,7 +57,7 @@ _unur_tabl_rh_sample( struct unur_gen *gen )
   double U,X,fx,V;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_INFINITY);
 
   /* main URNG */
   urng = gen->urng;
@@ -73,7 +73,7 @@ _unur_tabl_rh_sample( struct unur_gen *gen )
     while (iv->Acum < U)
       iv = iv->next;
 
-    COOKIE_CHECK(iv,CK_TABL_IV,INFINITY);
+    COOKIE_CHECK(iv,CK_TABL_IV,UNUR_INFINITY);
 
     /* reuse of uniform random number
        (generation of hat should be by inversion) */
@@ -129,7 +129,7 @@ _unur_tabl_rh_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   UNUR_URNG *urng;             /* pointer to uniform random number generator */
@@ -137,7 +137,7 @@ _unur_tabl_rh_sample_check( struct unur_gen *gen )
   double U,X,fx,V;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_INFINITY);
 
   /* main URNG */
   urng = gen->urng;
@@ -153,7 +153,7 @@ _unur_tabl_rh_sample_check( struct unur_gen *gen )
     while (iv->Acum < U)
       iv = iv->next;
 
-    COOKIE_CHECK(iv,CK_TABL_IV,INFINITY);
+    COOKIE_CHECK(iv,CK_TABL_IV,UNUR_INFINITY);
 
     /* reuse of uniform random number
        (generation of squeeze should be inversion) */
@@ -215,14 +215,14 @@ _unur_tabl_ia_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   struct unur_tabl_interval *iv;
   double U,X,fx;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_INFINITY);
 
   while(1) {
 
@@ -235,7 +235,7 @@ _unur_tabl_ia_sample( struct unur_gen *gen )
     while (iv->Acum < U)
       iv = iv->next;
 
-    COOKIE_CHECK(iv,CK_TABL_IV,INFINITY);
+    COOKIE_CHECK(iv,CK_TABL_IV,UNUR_INFINITY);
 
     /* reuse of uniform random number
        (generation from squeeze should be inversion) */
@@ -282,14 +282,14 @@ _unur_tabl_ia_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   struct unur_tabl_interval *iv;
   double U,X,fx;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_INFINITY);
 
   while(1) {
 
@@ -302,7 +302,7 @@ _unur_tabl_ia_sample_check( struct unur_gen *gen )
     while (iv->Acum < U)
       iv = iv->next;
 
-    COOKIE_CHECK(iv,CK_TABL_IV,INFINITY);
+    COOKIE_CHECK(iv,CK_TABL_IV,UNUR_INFINITY);
 
     /* reuse of uniform random number
        (generation of squeeze should be inversion) */
@@ -380,7 +380,7 @@ _unur_tabl_improve_hat( struct unur_gen *gen, struct unur_tabl_interval *iv,
   if (! (result == UNUR_SUCCESS || result == UNUR_ERR_SILENT) ) {
     /* condition for PDF is violated! */
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"");
-    /* replace sampling routine by dummy routine that just returns INFINITY */
+    /* replace sampling routine by dummy routine that just returns UNUR_INFINITY */
     SAMPLE = _unur_sample_cont_error;
     return UNUR_ERR_GEN_CONDITION;
   }
@@ -391,7 +391,7 @@ _unur_tabl_improve_hat( struct unur_gen *gen, struct unur_tabl_interval *iv,
       (2) the guide table method requires a acc./rej. step. **/
   if ( _unur_tabl_make_guide_table(gen) != UNUR_SUCCESS) {
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"cannot create guide table");
-    /* replace sampling routine by dummy routine that just returns INFINITY */
+    /* replace sampling routine by dummy routine that just returns UNUR_INFINITY */
     SAMPLE = _unur_sample_cont_error;
     return UNUR_ERR_GEN_CONDITION;
   }

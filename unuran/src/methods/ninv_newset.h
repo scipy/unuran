@@ -563,7 +563,7 @@ unur_ninv_chg_truncated( struct unur_gen *gen, double left, double right )
      /*   right ... right boundary point                                     */
      /*                                                                      */
      /* comment:                                                             */
-     /*   the new boundary points may be +/- INFINITY                        */
+     /*   the new boundary points may be +/- UNUR_INFINITY                   */
      /*----------------------------------------------------------------------*/
 {
   double Umin, Umax;
@@ -589,8 +589,8 @@ unur_ninv_chg_truncated( struct unur_gen *gen, double left, double right )
   }
 
   /* set bounds of U -- in respect to given bounds */
-  Umin = (left > -INFINITY) ? CDF(left)  : 0.;
-  Umax = (right < INFINITY) ? CDF(right) : 1.;
+  Umin = (left > -UNUR_INFINITY) ? CDF(left)  : 0.;
+  Umax = (right < UNUR_INFINITY) ? CDF(right) : 1.;
 
   /* check result */
   if (Umin > Umax) {

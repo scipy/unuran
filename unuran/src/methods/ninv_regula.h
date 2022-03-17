@@ -57,7 +57,7 @@ _unur_ninv_regula( const struct unur_gen *gen, double u )
      /*     double (sample from random variate)                             */
      /*                                                                     */
      /*   error:                                                            */
-     /*     return INFINITY                                                 */
+     /*     return UNUR_INFINITY                                            */
      /*                                                                     */
      /*   Remark:                                                           */
      /*     The routine computes the root of CDF(x)-u                       */
@@ -80,12 +80,12 @@ _unur_ninv_regula( const struct unur_gen *gen, double u )
   double rel_u_resolution; /* relative u resolution                         */
 
   /* check arguments */
-  CHECK_NULL(gen, INFINITY);  COOKIE_CHECK(gen, CK_NINV_GEN, INFINITY);
+  CHECK_NULL(gen, UNUR_INFINITY);  COOKIE_CHECK(gen, CK_NINV_GEN, UNUR_INFINITY);
 
   /* compute relative u resolution */
   rel_u_resolution = ( (GEN->u_resolution > 0.) ? 
 		       (GEN->Umax - GEN->Umin) * GEN->u_resolution :
-		       INFINITY );
+		       UNUR_INFINITY );
 
   /* -- 1. + 2. find bracket -- */
 
@@ -208,7 +208,7 @@ _unur_ninv_bisect( const struct unur_gen *gen, double u )
      /*     double (sample from random variate)                             */
      /*                                                                     */
      /*   error:                                                            */
-     /*     return INFINITY                                                 */
+     /*     return UNUR_INFINITY                                            */
      /*                                                                     */
      /*   Remark:                                                           */
      /*     The routine computes the root of CDF(x)-u                       */
@@ -225,12 +225,12 @@ _unur_ninv_bisect( const struct unur_gen *gen, double u )
   double rel_u_resolution; /* relative u resolution                         */
 
   /* check arguments */
-  CHECK_NULL(gen, INFINITY);  COOKIE_CHECK(gen, CK_NINV_GEN, INFINITY);
+  CHECK_NULL(gen, UNUR_INFINITY);  COOKIE_CHECK(gen, CK_NINV_GEN, UNUR_INFINITY);
 
   /* compute relative u resolution */
   rel_u_resolution = ( (GEN->u_resolution > 0.) ?
 		       (GEN->Umax - GEN->Umin) * GEN->u_resolution :
-		       INFINITY );
+		       UNUR_INFINITY );
 
   /* -- 1. + 2. find bracket -- */
 
@@ -314,7 +314,7 @@ _unur_ninv_bracket( const struct unur_gen *gen, double u,
 { 
   int i;                 /* loop variable, index                             */
   double x1, x2, xtmp;   /* points for bracket                               */
-  double f1, f2, ftmp;   /* function values at x1, x2, xtmp                  */
+  double f1, f2;         /* function values at x1, x2                        */
   double step;           /* enlarges interval til sign change found          */
   int step_count;        /* counts number of steps finding sign change       */
 
@@ -366,7 +366,7 @@ _unur_ninv_bracket( const struct unur_gen *gen, double u,
   /*  -- 1c. check for ordering of starting points -- */
 
   if ( x1 >= x2 ) { 
-    xtmp = x1; ftmp = f1;
+    xtmp = x1;
     x1   = x2; f1   = f2;
     x2 = xtmp + fabs(xtmp)*DBL_EPSILON;
     f2 = CDF(x2); 
@@ -375,7 +375,7 @@ _unur_ninv_bracket( const struct unur_gen *gen, double u,
   /* -- 1d. check for boundary of truncated domain -- */
  
   /* in case of truncated domain there might be better starting points */
-  /* ! no problems with INFINITY !  */
+  /* ! no problems with UNUR_INFINITY !  */
   if ( x1 < DISTR.trunc[0] || x1 >= DISTR.trunc[1] ){
     x1 = DISTR.trunc[0];
     f1 = GEN->Umin;    /* = CDF(x1) */

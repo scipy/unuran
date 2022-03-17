@@ -317,9 +317,9 @@ unur_itdr_new( const struct unur_distr *distr )
   par->distr    = distr;          /* pointer to distribution object          */
 
   /* set default values */
-  PAR->xi = INFINITY;       /* intersection point lc(x)=ilc(x)               */
-  PAR->cp = INFINITY;       /* c-value for pole region (unknown)             */
-  PAR->ct = INFINITY;       /* c-value for tail region (unknown)             */
+  PAR->xi = UNUR_INFINITY;        /* intersection point lc(x)=ilc(x)         */
+  PAR->cp = UNUR_INFINITY;        /* c-value for pole region (unknown)       */
+  PAR->ct = UNUR_INFINITY;        /* c-value for tail region (unknown)       */
   
   par->method   = UNUR_METH_ITDR;     /* method and default variant          */
   par->variant  = 0u;                 /* default variant                     */
@@ -453,13 +453,13 @@ double unur_itdr_get_xi( struct unur_gen *gen )
      /*   gen  ... pointer to generator object                               */
      /*                                                                      */
      /* return:                                                              */
-     /*   xi       ... on success                                            */
-     /*   INFINITY ... on error                                              */
+     /*   xi            ... on success                                       */
+     /*   UNUR_INFINITY ... on error                                         */
      /*----------------------------------------------------------------------*/
 {
   /* check input */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ITDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ITDR, UNUR_INFINITY );
 
   return GEN->xi;
 } /* end of unur_itdr_get_xi() */
@@ -474,13 +474,13 @@ double unur_itdr_get_cp( struct unur_gen *gen )
      /*   gen  ... pointer to generator object                               */
      /*                                                                      */
      /* return:                                                              */
-     /*   cp       ... on success                                            */
-     /*   INFINITY ... on error                                              */
+     /*   cp            ... on success                                       */
+     /*   UNUR_INFINITY ... on error                                         */
      /*----------------------------------------------------------------------*/
 {
   /* check input */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ITDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ITDR, UNUR_INFINITY );
 
   return GEN->cp;
 } /* end of unur_itdr_get_cp() */
@@ -495,13 +495,13 @@ double unur_itdr_get_ct( struct unur_gen *gen )
      /*   gen  ... pointer to generator object                               */
      /*                                                                      */
      /* return:                                                              */
-     /*   ct       ... on success                                            */
-     /*   INFINITY ... on error                                              */
+     /*   ct            ... on success                                       */
+     /*   UNUR_INFINITY ... on error                                         */
      /*----------------------------------------------------------------------*/
 {
   /* check input */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ITDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ITDR, UNUR_INFINITY );
 
   return GEN->ct;
 } /* end of unur_itdr_get_ct() */
@@ -516,13 +516,13 @@ double unur_itdr_get_area( struct unur_gen *gen )
      /*   gen  ... pointer to generator object                               */
      /*                                                                      */
      /* return:                                                              */
-     /*   area     ... on success                                            */
-     /*   INFINITY ... on error                                              */
+     /*   area          ... on success                                       */
+     /*   UNUR_INFINITY ... on error                                         */
      /*----------------------------------------------------------------------*/
 {
   /* check input */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ITDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ITDR, UNUR_INFINITY );
 
   return GEN->Atot;
 } /* end of unur_itdr_get_area() */
@@ -745,21 +745,21 @@ _unur_itdr_create( struct unur_par *par )
   GEN->ct = PAR->ct;       /* c-value for tail region             */
 
   /* initialize values */
-  GEN->bx = INFINITY;      /* splitting point betw. pole and tail */
-  GEN->xp = INFINITY;      /* design point in pole region         */
-  GEN->xt = INFINITY;      /* design point in tail region         */
-  GEN->alphap = INFINITY;  /* parameters for hat in pole region   */
-  GEN->betap = INFINITY;
-  GEN->Tfxt = INFINITY;    /* parameters for hat in tail region   */
-  GEN->dTfxt = INFINITY;   /* parameters for hat in tail region   */
-  GEN->by = INFINITY;      /* hat of pole region at bx            */
-  GEN->Ap = INFINITY;      /* areas in upper pole region          */     
-  GEN->Ac = INFINITY;      /* areas in central region             */     
-  GEN->At = INFINITY;      /* areas in tail region                */     
-  GEN->Atot = INFINITY;    /* total area below hat                */
-  GEN->sy = 0.;            /* squeeze for central region          */
-  GEN->sign = 1.;          /* region: +1 .. (-oo,0], -1 .. [0,oo) */
-  GEN->bd_right = INFINITY; /* right boundary of shifted domain   */
+  GEN->bx = UNUR_INFINITY;      /* splitting point betw. pole and tail */
+  GEN->xp = UNUR_INFINITY;      /* design point in pole region         */
+  GEN->xt = UNUR_INFINITY;      /* design point in tail region         */
+  GEN->alphap = UNUR_INFINITY;  /* parameters for hat in pole region   */
+  GEN->betap = UNUR_INFINITY;
+  GEN->Tfxt = UNUR_INFINITY;    /* parameters for hat in tail region   */
+  GEN->dTfxt = UNUR_INFINITY;   /* parameters for hat in tail region   */
+  GEN->by = UNUR_INFINITY;      /* hat of pole region at bx            */
+  GEN->Ap = UNUR_INFINITY;      /* areas in upper pole region          */     
+  GEN->Ac = UNUR_INFINITY;      /* areas in central region             */     
+  GEN->At = UNUR_INFINITY;      /* areas in tail region                */     
+  GEN->Atot = UNUR_INFINITY;    /* total area below hat                */
+  GEN->sy = 0.;                 /* squeeze for central region          */
+  GEN->sign = 1.;               /* region: +1 .. (-oo,0], -1 .. [0,oo) */
+  GEN->bd_right = UNUR_INFINITY;/* right boundary of shifted domain    */
   
 #ifdef UNUR_ENABLE_INFO
   /* set function for creating info string */
@@ -894,13 +894,13 @@ _unur_itdr_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   double U, V, X, Y;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_ITDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_ITDR_GEN,UNUR_INFINITY);
 
   while (1) {
     /* generate point uniformly on (0,Atot) */
@@ -985,7 +985,7 @@ _unur_itdr_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
 #define ht(x)  ( TI(GEN->ct, GEN->Tfxt + GEN->dTfxt*((x)-GEN->xt)) )
@@ -995,7 +995,7 @@ _unur_itdr_sample_check( struct unur_gen *gen )
   double fx, hx, sqx;  /* values of PDF, hat and squeeze at x */
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_ITDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_ITDR_GEN,UNUR_INFINITY);
 
   while (1) {
     /* generate point uniformly on (0,Atot) */
@@ -1157,7 +1157,7 @@ _unur_itdr_get_hat_pole( struct unur_gen *gen )
   double cp, xp;
   double pdf_bx;
   double near_pole, ilc_near_pole, pdf_near_pole, logpdf_near_pole;
-  double ilc_bx = -INFINITY;
+  double ilc_bx = -UNUR_INFINITY;
 
   /* get cp */
   if (gen->set & ITDR_SET_CP) {
@@ -1185,9 +1185,9 @@ _unur_itdr_get_hat_pole( struct unur_gen *gen )
   pdf_bx = PDF(GEN->bx);
   near_pole = fabs(GEN->pole)*DBL_EPSILON;
   if (near_pole < 1.e-100) near_pole = 1.e-100;
-  pdf_near_pole = logpdf_near_pole = INFINITY;
+  pdf_near_pole = logpdf_near_pole = UNUR_INFINITY;
   while (1) {
-    /* we have to search for a point with PDF(x) < INFINITY */
+    /* we have to search for a point with PDF(x) < UNUR_INFINITY */
     if (DISTR.logpdf) {
       logpdf_near_pole = logPDF(near_pole);
       if (_unur_isfinite(logpdf_near_pole)) 
@@ -1230,7 +1230,7 @@ _unur_itdr_get_hat_pole( struct unur_gen *gen )
       if (cp < ilc_bx) {
 	/* we try ilc at bx first before we use an even smaller value for cp */
 	GEN->cp = cp = ilc_bx; 
-	ilc_bx = -INFINITY;
+	ilc_bx = -UNUR_INFINITY;
       }
       if (cp < -0.999) {
 	_unur_error(gen->genid,UNUR_ERR_DISTR_PROP,"cannot compute hat for pole: cp");
@@ -1379,7 +1379,7 @@ _unur_itdr_lc( struct unur_gen *gen, double x )
      /*   local concavity                                                    */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   double dx, f, df, ddf;
@@ -1429,7 +1429,7 @@ _unur_itdr_ilc( struct unur_gen *gen, double x )
      /*   inverse local concavity                                            */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
 
@@ -1484,7 +1484,7 @@ _unur_itdr_find_xt( struct unur_gen *gen, double b )
      /*   solution xi                                                        */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   /* function for finding root */
@@ -1496,14 +1496,14 @@ _unur_itdr_find_xt( struct unur_gen *gen, double b )
   double xn;      /* new guess for root */
 
   /* check parameter */
-  if (b < 0.) return INFINITY;
+  if (b < 0.) return UNUR_INFINITY;
 
   /* find appropriate starting value */
   xl = b + _unur_max(1., (fabs(GEN->pole)+b)*UNUR_SQRT_DBL_EPSILON);
   if (xl > GEN->bd_right) xl = GEN->bd_right;
   while (!_unur_isfinite(FKT(xl)) || _unur_iszero(PDF(xl)) ) {
     xl = 0.5*(xl + b);
-    if (!_unur_isfinite(xl) || _unur_FP_same(xl,b)) return INFINITY;
+    if (!_unur_isfinite(xl) || _unur_FP_same(xl,b)) return UNUR_INFINITY;
   }
   xu = xl;
 
@@ -1517,7 +1517,7 @@ _unur_itdr_find_xt( struct unur_gen *gen, double b )
       xu += xu - b;
       if (!_unur_isfinite(xu) || xu < (1.+2.*DBL_EPSILON)*xl)
 	/* unable to proceed --> break to avoid infinite loop */
-	return INFINITY;
+	return UNUR_INFINITY;
       if (xu >= GEN->bd_right) 
 	/* we have reached right boundary */
 	return GEN->bd_right;
@@ -1527,7 +1527,7 @@ _unur_itdr_find_xt( struct unur_gen *gen, double b )
     do {
       xu = xl;
       xl = 0.5*(xl + b);
-      if (!_unur_isfinite(xl)) return INFINITY;
+      if (!_unur_isfinite(xl)) return UNUR_INFINITY;
     } while(FKT(xl) < 0.);
   }
 

@@ -408,7 +408,7 @@ static int _unur_pinv_newton_cpoints (double *xval, int order, struct unur_pinv_
 /*---------------------------------------------------------------------------*/
 
 static int _unur_pinv_newton_create (struct unur_gen *gen, struct unur_pinv_interval *iv, 
-				     double *xval);
+				     double *xval, int smooth);
 /*---------------------------------------------------------------------------*/
 /* 2a. Compute coefficients for Newton interpolation.                        */
 /*---------------------------------------------------------------------------*/
@@ -424,8 +424,8 @@ static double _unur_pinv_newton_eval (double q, double *ui, double *zi, int orde
 /* 2b. evaluate Newton polynomial.                                           */
 /*---------------------------------------------------------------------------*/
 
-static double _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv, 
-					  double *xval, int use_linear);
+static double _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv, double *xval);
+static double _unur_pinv_linear_maxerror (struct unur_gen *gen, struct unur_pinv_interval *iv);
 /*---------------------------------------------------------------------------*/
 /* 2c. estimate maximal error of Newton interpolation in subinterval         */
 /*---------------------------------------------------------------------------*/
@@ -433,11 +433,6 @@ static double _unur_pinv_newton_maxerror (struct unur_gen *gen, struct unur_pinv
 static int _unur_pinv_newton_testpoints (double *utest, double ui[], int order);
 /*---------------------------------------------------------------------------*/
 /* [2c.] calculate the local maxima of the interpolation polynomial          */
-/*---------------------------------------------------------------------------*/
-
-static int _unur_pinv_linear_testpoints (double *utest, double *ui, int order);
-/*---------------------------------------------------------------------------*/
-/* [2c.] create table of test points for linear interpolation                */
 /*---------------------------------------------------------------------------*/
 
 static int _unur_pinv_cubic_hermite_is_monotone();

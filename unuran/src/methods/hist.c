@@ -405,14 +405,14 @@ _unur_hist_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U;
   int J;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HIST_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HIST_GEN,UNUR_INFINITY);
 
   /* sample from U(0,1) */
   U = _unur_call_urng(gen->urng);
@@ -595,7 +595,7 @@ _unur_hist_info( struct unur_gen *gen, int help )
   /*   } */
   
   /* method */
-  _unur_string_append(info,"method: HIST (HISTogramm of empirical distribution)\n");
+  _unur_string_append(info,"method: HIST (HISTogram of empirical distribution)\n");
   _unur_string_append(info,"\n");
 
   /* performance */

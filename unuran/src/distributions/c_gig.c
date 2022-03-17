@@ -59,7 +59,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2000-2006 Wolfgang Hoermann and Josef Leydold             *
+ *   Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold             *
  *   Department of Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -84,7 +84,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -99,7 +98,7 @@ static const char distr_name[] = "gig";
 #define eta    params[2]    /* shape */
 
 #define DISTR distr->data.cont
-/* #define NORMCONSTANT (distr->data.cont.norm_constant) */
+#define LOGNORMCONSTANT (distr->data.cont.norm_constant)
 
 /* function prototypes                                                       */
 static double _unur_pdf_gig( double x, const UNUR_DISTR *distr );
@@ -109,6 +108,9 @@ static double _unur_dlogpdf_gig( double x, const UNUR_DISTR *distr );
 /* static double _unur_cdf_gig( double x, const UNUR_DISTR *distr ); */
 
 static int _unur_upd_mode_gig( UNUR_DISTR *distr );
+#ifdef _unur_SF_bessel_k
+static double _unur_lognormconstant_gig( const double *params, int n_params );
+#endif
 static int _unur_set_params_gig( UNUR_DISTR *distr, const double *params, int n_params );
 
 /*---------------------------------------------------------------------------*/
@@ -122,7 +124,7 @@ _unur_pdf_gig(double x, const UNUR_DISTR *distr)
     /* out of support */
     return 0.;
 
-  return (exp( (theta-1.) * log(x) - 0.5 * omega * (x/eta + eta/x) ));
+  return (exp( LOGNORMCONSTANT + (theta-1.) * log(x) - 0.5 * omega * (x/eta + eta/x) ));
 
 } /* end of _unur_pdf_gig() */
 
@@ -135,9 +137,9 @@ _unur_logpdf_gig(double x, const UNUR_DISTR *distr)
 
   if (x <= 0.)
     /* out of support */
-    return -INFINITY;
+    return -UNUR_INFINITY;
 
-  return ( (theta-1.) * log(x) - 0.5 * omega * (x/eta + eta/x) );
+  return ( LOGNORMCONSTANT + (theta-1.) * log(x) - 0.5 * omega * (x/eta + eta/x) );
 
 } /* end of _unur_logpdf_gig() */
 
@@ -152,11 +154,10 @@ _unur_dpdf_gig(double x, const UNUR_DISTR *distr)
     /* out of support */
     return 0.;
 
-  return ( exp( (theta-3.) * log(x) - 0.5 * omega * (x/eta + eta/x) )
+  return ( exp( LOGNORMCONSTANT + (theta-3.) * log(x) - 0.5 * omega * (x/eta + eta/x) )
 	   * (eta*eta*omega + 2.*eta*(theta-1.)*x - omega*x*x) / (2*eta) );
 
 } /* end of _unur_dpdf_gig() */
-
 
 /*---------------------------------------------------------------------------*/
 
@@ -180,8 +181,16 @@ _unur_upd_mode_gig( UNUR_DISTR *distr )
 {
   register const double *params = DISTR.params;
 
-  DISTR.mode =
-    (eta*(-1. + sqrt(omega*omega + (theta-1.)*(theta-1.)) + theta))/omega;
+  if (theta >= 1.) {
+    /* mode of PDF(x) */
+    DISTR.mode =
+      eta * (sqrt(omega*omega + (theta-1.)*(theta-1.)) + (theta-1.))/omega;
+  }
+  else {
+    /* inverse of mode of PDF(1/x) */
+    DISTR.mode =
+      eta * omega / (sqrt((1.-theta)*(1.-theta) + omega*omega)+(1.-theta));
+  }
 
   /* mode must be in domain */
   if (DISTR.mode < DISTR.domain[0]) 
@@ -191,6 +200,24 @@ _unur_upd_mode_gig( UNUR_DISTR *distr )
 
   return UNUR_SUCCESS;
 } /* end of _unur_upd_mode_gig() */
+
+/*---------------------------------------------------------------------------*/
+
+#ifdef _unur_SF_bessel_k
+double
+_unur_lognormconstant_gig(const double *params, int n_params ATTRIBUTE__UNUSED)
+{
+  double logconst = -M_LN2 - theta*log(eta);
+
+  if (theta < 50) 
+    /* threshold value 50 is selected by experiments */
+    logconst -= _unur_SF_ln_bessel_k(omega, theta);
+  else 
+    logconst -= _unur_SF_bessel_k_nuasympt(omega, theta, TRUE, FALSE);
+
+  return logconst;
+} /* end of _unur_normconstant_gig() */
+#endif
 
 /*---------------------------------------------------------------------------*/
 
@@ -235,8 +262,8 @@ _unur_set_params_gig( UNUR_DISTR *distr, const double *params, int n_params )
 
   /* set (standard) domain */
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = 0.;          /* left boundary  */
-    DISTR.domain[1] = INFINITY;    /* right boundary */
+    DISTR.domain[0] = 0.;             /* left boundary  */
+    DISTR.domain[1] = UNUR_INFINITY;  /* right boundary */
   }
 
   return UNUR_SUCCESS;
@@ -266,13 +293,15 @@ unur_distr_gig( const double *params, int n_params )
   DISTR.logpdf  = _unur_logpdf_gig;  /* pointer to logPDF               */
   DISTR.dpdf    = _unur_dpdf_gig;    /* pointer to derivative of PDF    */
   DISTR.dlogpdf = _unur_dlogpdf_gig; /* pointer to derivative of logPDF */
-  DISTR.cdf  = NULL;                 /* _unur_cdf_gig; pointer to CDF   */
+  DISTR.cdf     = NULL;              /* _unur_cdf_gig; pointer to CDF   */
 
   /* indicate which parameters are set */
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
+#ifdef _unur_SF_bessel_k
+		 UNUR_DISTR_SET_PDFAREA |
+#endif
 		 UNUR_DISTR_SET_MODE   );
-		 /* UNUR_DISTR_SET_PDFAREA ); */
                 
   /* set parameters for distribution */
   if (_unur_set_params_gig(distr,params,n_params)!=UNUR_SUCCESS) {
@@ -281,11 +310,17 @@ unur_distr_gig( const double *params, int n_params )
   }
 
   /* log of normalization constant */
-  /*    DISTR.LOGNORMCONSTANT = ? */
+#ifdef _unur_SF_bessel_k
+  LOGNORMCONSTANT = _unur_lognormconstant_gig(DISTR.params,DISTR.n_params);
+#else
+  LOGNORMCONSTANT = 0.;
+#endif
 
   /* mode and area below p.d.f. */
   _unur_upd_mode_gig(distr);
-  /*    DISTR.area = ? */
+#ifdef _unur_SF_bessel_k
+  DISTR.area = 1.;
+#endif
 
   /* function for setting parameters and updating domain */
   DISTR.set_params = _unur_set_params_gig;

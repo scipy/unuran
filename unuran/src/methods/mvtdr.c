@@ -55,7 +55,6 @@
 #include <distributions/unur_distributions.h>
 #include <utils/fmax_source.h>
 #include <utils/matrix_source.h>
-#include <specfunct/unur_specfunct_source.h>
 #include <urng/urng.h>
 #include "unur_methods_source.h"
 #include "x_gen.h"

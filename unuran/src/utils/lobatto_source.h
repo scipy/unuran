@@ -72,7 +72,7 @@ double _unur_lobatto_eval_diff (struct unur_lobatto_table *Itable, double x, dou
 
 double _unur_lobatto_eval_CDF (struct unur_lobatto_table *Itable, double x);
 /*---------------------------------------------------------------------------*/
-/* evaluate integration object over the interval (-INFINITY, x).             */
+/* evaluate integration object over the interval (-UNUR_INFINITY, x).        */
 /* it is important, that the integration object 'Itable' already exists.     */
 /*---------------------------------------------------------------------------*/
 

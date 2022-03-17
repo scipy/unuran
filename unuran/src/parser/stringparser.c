@@ -84,11 +84,11 @@
  *                'inf[...]' is transformed to INT_MAX,                      *
  *                '-inf[...]' is transformed to INT_MIN.                     *
  *      unsigned: string is interpreted as hexadecimal number.               *
- *      double:   'inf[...]' is transformed to INFINITY,                     *
- *                '-inf[...]' is transformed to -INFINITY.                   *
+ *      double:   'inf[...]' is transformed to UNUR_INFINITY,                *
+ *                '-inf[...]' is transformed to -UNUR_INFINITY.              *
  *      double, double: Instead of two doubles, a list with at least two     *
  *                numbers can be given.                                      *
- *                'inf[...]' is transformed to INFINITY.                     *
+ *                'inf[...]' is transformed to UNUR_INFINITY.                *
  *      int, double*: If the first argument is missing, it is replaced       *
  *                by the size of the array.                                  *
  *                If the second argument is missing, the NULL pointer is     *
@@ -2645,10 +2645,10 @@ _unur_atod ( const char *str )
      /*----------------------------------------------------------------------*/
 {
   if ( !strncmp(str,"inf",(size_t)3) )
-    return INFINITY;
+    return UNUR_INFINITY;
 
   else if ( !strncmp(str,"-inf",(size_t)4) )
-    return -INFINITY;
+    return -UNUR_INFINITY;
 
   else
     return atof(str);

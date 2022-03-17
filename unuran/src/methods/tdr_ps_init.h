@@ -71,7 +71,7 @@ _unur_tdr_ps_starting_intervals( struct unur_gen *gen )
      (In variant GW it is used to store the left boundary of the domain
      of the PDF)
      Thus we remove it from the list. At such points the slope of the
-     tangents to the transformed density is set to INFINITY. */
+     tangents to the transformed density is set to UNUR_INFINITY. */
   if (_unur_FP_is_infinity(iv->dTfx)) {
     GEN->iv = iv->next;
     GEN->iv->prev = NULL;
@@ -107,7 +107,7 @@ _unur_tdr_ps_starting_intervals( struct unur_gen *gen )
 	iv_new->fip = iv->fx;
 	/* make shure that we will never use this interval for sampling. */
 	iv->next->Asqueeze = iv->next->Ahat = iv->next->Ahatr = 0.;
-	iv->Acum = INFINITY;
+	iv->Acum = UNUR_INFINITY;
 	iv->next-> sq = 0.;
 	/* we even have to to some additional work */
       }
@@ -141,7 +141,7 @@ _unur_tdr_ps_starting_intervals( struct unur_gen *gen )
 	/* last (virtuel) interval in list.
 	   make shure that we will never use this segment */
 	iv->Asqueeze = iv->Ahat = iv->Ahatr = iv->sq = 0.;
-	iv->Acum = INFINITY;
+	iv->Acum = UNUR_INFINITY;
       }
       else
 	/* we need a pointer to the previous entry in the list */
@@ -161,7 +161,7 @@ _unur_tdr_ps_starting_intervals( struct unur_gen *gen )
     /* area below hat infinite --> insert new construction point.
        We have to find out on which side of the construction point
        the area of the hat is unbounded. */
-    if (iv->Ahatr >= INFINITY) {
+    if (iv->Ahatr >= UNUR_INFINITY) {
       /* right hand side */
 
       /* iv should never be the last (virtual) interval */
@@ -513,7 +513,7 @@ _unur_tdr_ps_interval_parameter( struct unur_gen *gen, struct unur_tdr_interval 
      /* return:                                                              */
      /*   UNUR_SUCCESS    ... if successful                                  */
      /*   UNUR_ERR_SILENT ... do not add this construction point             */
-     /*   UNUR_ERR_INF    ... area = INFINITY                                */
+     /*   UNUR_ERR_INF    ... area = UNUR_INFINITY                           */
      /*   others          ... error (PDF not T-concave)                      */
      /*----------------------------------------------------------------------*/
 {

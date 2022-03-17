@@ -94,8 +94,8 @@ int unur_reinit( UNUR_GEN *generator );
    @end table
 
    @emph{Important}: When reinitialization fails then sampling routines
-   always return INFINITY (for continuous distributions) or @code{0} (for
-   discrete distributions), respectively.
+   always return @code{UNUR_INFINITY} (for continuous distributions) 
+   or @code{0} (for discrete distributions), respectively.
    However, it is still possible to change the underlying distribution
    and try to reinitialize again.
 
@@ -193,16 +193,32 @@ const char *unur_gen_info( UNUR_GEN *generator, int help );
 /* Get dimension of generator for (multivariate) distribution                */
 
 int unur_get_dimension( const UNUR_GEN *generator );
-/*
-  Get the number of dimension of a (multivariate) distribution.
-  For a univariate distribution @code{1} is return.
+/* 
+   Get the number of dimension of a (multivariate) distribution.
+   For a univariate distribution @code{1} is return.
 */
 
 /*---------------------------------------------------------------------------*/
 
 const char *unur_get_genid( const UNUR_GEN *generator );
-/*
-  Get identifier string for generator.
+/* 
+   Get identifier string for generator.
+*/
+
+/*---------------------------------------------------------------------------*/
+
+unsigned int unur_get_method( const UNUR_GEN *generator );
+/* 
+   Get identifier for generating method.
+   These identifiers are declared in @file{src/methods/unur_metthods.h}.
+*/
+
+/*---------------------------------------------------------------------------*/
+
+int unur_gen_is_inversion ( const UNUR_GEN *gen );
+/* 
+   Return TRUE if the generator object implements an inversion method,
+   and FALSE otherwise.
 */
 
 /*---------------------------------------------------------------------------*/

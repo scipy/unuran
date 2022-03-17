@@ -11,7 +11,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2000-2010 Wolfgang Hoermann and Josef Leydold             *
+ *   Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold             *
  *   Department of Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -99,8 +99,9 @@
 /*    bits 13-24 ... adaptive steps                                          */
 /*    bits 25-32 ... trace sampling                                          */
 
-#define CSTD_DEBUG_REINIT    0x00000010u   /* print parameters after reinit  */
-#define CSTD_DEBUG_CHG       0x00001000u   /* print changed parameters       */
+#define CSTD_DEBUG_GEN       0x00000005u   /* print constants for generator  */
+#define CSTD_DEBUG_REINIT    0x00000010u   /* print params of distr after reinit */
+#define CSTD_DEBUG_CHG       0x00001000u   /* print changed params of distr  */
 
 /*---------------------------------------------------------------------------*/
 /* Flags for logging set calls                                               */
@@ -322,7 +323,7 @@ unur_cstd_chg_truncated( struct unur_gen *gen, double left, double right )
      /*   error code   ... on error                                          */
      /*                                                                      */
      /* comment:                                                             */
-     /*   the new boundary points may be +/- INFINITY                        */
+     /*   the new boundary points may be +/- UNUR_INFINITY                   */
      /*----------------------------------------------------------------------*/
 {
   double Umin, Umax;
@@ -361,8 +362,8 @@ unur_cstd_chg_truncated( struct unur_gen *gen, double left, double right )
   }
 
   /* compute umin and umax */
-  Umin = (left > -INFINITY) ? CDF(left) : 0.;
-  Umax = (right < INFINITY) ? CDF(right) : 1.;
+  Umin = (left > -UNUR_INFINITY) ? CDF(left) : 0.;
+  Umax = (right < UNUR_INFINITY) ? CDF(right) : 1.;
 
   /* check result */
   if (Umin > Umax) {
@@ -601,8 +602,8 @@ _unur_cstd_check_par( struct unur_gen *gen )
     }
 
     /* compute Umin and Umax */
-    GEN->Umin = (DISTR.trunc[0] > -INFINITY) ? CDF(DISTR.trunc[0]) : 0.;
-    GEN->Umax = (DISTR.trunc[1] < INFINITY)  ? CDF(DISTR.trunc[1]) : 1.;
+    GEN->Umin = (DISTR.trunc[0] > -UNUR_INFINITY) ? CDF(DISTR.trunc[0]) : 0.;
+    GEN->Umax = (DISTR.trunc[1] < UNUR_INFINITY)  ? CDF(DISTR.trunc[1]) : 1.;
   }
 
   return UNUR_SUCCESS;
@@ -703,12 +704,12 @@ _unur_cstd_sample_inv( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   double U;
 
-  if (!DISTR.invcdf) return INFINITY;
+  if (!DISTR.invcdf) return UNUR_INFINITY;
 
   /* sample from uniform random number generator */
   while (_unur_iszero(U = GEN->Umin + _unur_call_urng(gen->urng) * (GEN->Umax-GEN->Umin)));
@@ -733,18 +734,18 @@ unur_cstd_eval_invcdf( const struct unur_gen *gen, double u )
      /*   double (inverse CDF)                                               */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   double x;
 
   /* check arguments */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_CSTD ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
 
   if (!DISTR.invcdf) {
     /* no inverse CDF available */
@@ -814,6 +815,7 @@ _unur_cstd_inversion_init( struct unur_par *par, struct unur_gen *gen )
       }
     }
 
+    /* FALLTHROUGH */
   default: /* no such generator */
     if (gen) _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
     return UNUR_FAILURE;
@@ -842,6 +844,7 @@ _unur_cstd_debug_init( struct unur_gen *gen )
      /*----------------------------------------------------------------------*/
 {
   FILE *LOG;
+  int i;
 
   /* check arguments */
   CHECK_NULL(gen,RETURN_VOID);  COOKIE_CHECK(gen,CK_CSTD_GEN,RETURN_VOID);
@@ -866,10 +869,27 @@ _unur_cstd_debug_init( struct unur_gen *gen )
     fprintf(LOG,"   (Inversion)");
   fprintf(LOG,"\n%s:\n",gen->genid);
 
+  /* table of precomputed constants for special generators */
+  if (gen->debug & CSTD_DEBUG_GEN) {
+    fprintf(LOG,"%s: precomputed constants for routine: ",gen->genid);
+    if (GEN->gen_param) {
+      fprintf(LOG,"%d\n",GEN->n_gen_param);
+      for (i=0; i < GEN->n_gen_param; i++)
+	fprintf(LOG,"%s:\t[%d] = %g\n",gen->genid,i,GEN->gen_param[i]);
+    }
+    else {
+      fprintf(LOG,"none\n");
+    }
+    fprintf(LOG,"%s:\n",gen->genid);
+  }
+
+  /* truncated domain ? */
   if (!(gen->distr->set & UNUR_DISTR_SET_STDDOMAIN)) {
     fprintf(LOG,"%s: domain has been changed. U in (%g,%g)\n",gen->genid,GEN->Umin,GEN->Umax);
     fprintf(LOG,"%s:\n",gen->genid);
   }
+
+  fflush(LOG);
 
 } /* end of _unur_cstd_debug_init() */
 
@@ -946,6 +966,7 @@ _unur_cstd_info( struct unur_gen *gen, int help )
 {
   struct unur_string *info = gen->infostr;
   int samplesize = 10000;
+  int i;
 
   /* generator ID */
   _unur_string_append(info,"generator ID: %s\n\n", gen->genid);
@@ -977,6 +998,20 @@ _unur_cstd_info( struct unur_gen *gen, int help )
     _unur_string_append(info,"parameters:\n");
     _unur_string_append(info,"   variant = %d  %s\n", gen->variant,
 			(gen->set & CSTD_SET_VARIANT) ? "" : "[default]");
+    _unur_string_append(info,"\n");
+  }
+
+  /* tables */
+  if (help) {
+    _unur_string_append(info,"table of precomputed constants: ");
+    if (GEN->gen_param) {
+      _unur_string_append(info,"%d\n",GEN->n_gen_param);
+      for (i=0; i < GEN->n_gen_param; i++)
+	_unur_string_append(info,"   [%d] = %g\n",i,GEN->gen_param[i]);
+    }
+    else  {
+      _unur_string_append(info,"none\n");
+    }
     _unur_string_append(info,"\n");
   }
 

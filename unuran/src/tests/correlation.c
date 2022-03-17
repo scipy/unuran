@@ -45,15 +45,6 @@
 #include <methods/x_gen_source.h>
 #include "unuran_tests.h"
 
-
-/* #include <limits.h> */
-/* #include <distr/cvec.h> */
-/* #include <distr/discr.h> */
-/* #include <distr/distr_source.h> */
-/* #include <distributions/unur_distributions.h> */
-/* #include <specfunct/unur_specfunct_source.h> */
-/* #include <utils/matrix_source.h> */
-
 /*---------------------------------------------------------------------------*/
 static char test_name[] = "Correlation";
 /*---------------------------------------------------------------------------*/

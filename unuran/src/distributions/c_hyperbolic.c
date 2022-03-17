@@ -26,7 +26,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2000-2010 Wolfgang Hoermann and Josef Leydold             *
+ *   Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold             *
  *   Department of Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -51,7 +51,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -194,8 +193,8 @@ _unur_set_params_hyperbolic( UNUR_DISTR *distr, const double *params, int n_para
 
   /* set (standard) domain */
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;   /* left boundary  */
-    DISTR.domain[1] = INFINITY;    /* right boundary */
+    DISTR.domain[0] = -UNUR_INFINITY;   /* left boundary  */
+    DISTR.domain[1] = UNUR_INFINITY;    /* right boundary */
   }
 
   return UNUR_SUCCESS;
@@ -240,7 +239,7 @@ unur_distr_hyperbolic( const double *params, int n_params )
   }
 
   /* normalization constant */
-  NORMCONSTANT = _unur_normconstant_hyperbolic(params,n_params);
+  NORMCONSTANT = _unur_normconstant_hyperbolic(DISTR.params,DISTR.n_params);
 
   /* mode and area below p.d.f. */
   _unur_upd_mode_hyperbolic(distr);

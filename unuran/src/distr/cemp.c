@@ -115,8 +115,8 @@ unur_distr_cemp_new( void )
   DISTR.n_hist    = 0;          /* number of bins          */
   DISTR.hist_prob = NULL;       /* probabilities for bins  */
   DISTR.hist_bins = NULL;       /* location of bins        */
-  DISTR.hmin      = -INFINITY;  /* lower ...               */
-  DISTR.hmax      = INFINITY;   /* ... and upper bound     */       
+  DISTR.hmin      = -UNUR_INFINITY; /* lower ...               */
+  DISTR.hmax      = UNUR_INFINITY;  /* ... and upper bound     */       
   DISTR.hist_bins = NULL;       /* boundary between bins   */
 
   /* return pointer to object */

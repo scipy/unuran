@@ -182,7 +182,7 @@ _unur_tabl_create( struct unur_par *par )
 
   /* check for required data: area */
   if (!(gen->distr->set & UNUR_DISTR_SET_PDFAREA))
-    if (unur_distr_cont_upd_pdfarea(gen->distr)!=UNUR_SUCCESS)
+    if (_unur_distr_cont_upd_pdfarea(gen->distr, TRUE)!=UNUR_SUCCESS)
       _unur_warning(GENTYPE,UNUR_ERR_DISTR_REQUIRED,"area below PDF, use default instead");
 
   /* set generator identifier */
@@ -382,8 +382,8 @@ _unur_tabl_get_intervals_from_slopes( struct unur_par *par, struct unur_gen *gen
   iv = GEN->iv = NULL;
 
   /* boundary of computational interval are reset by boundaries of slopes */
-  GEN->bleft = INFINITY;
-  GEN->bright = -INFINITY;
+  GEN->bleft = UNUR_INFINITY;
+  GEN->bright = -UNUR_INFINITY;
 
   /* compute initial intervals */
   for ( i=0; i < 2*PAR->n_slopes; i+=2 ) {
@@ -469,7 +469,7 @@ _unur_tabl_get_intervals_from_slopes( struct unur_par *par, struct unur_gen *gen
 
   /* reset area below distribution */
   gen->distr->set &= ~UNUR_DISTR_SET_PDFAREA;
-  unur_distr_cont_upd_pdfarea( gen->distr );
+  _unur_distr_cont_upd_pdfarea( gen->distr, TRUE );
 
   /* o.k. */
   return UNUR_SUCCESS;
@@ -587,7 +587,7 @@ _unur_tabl_get_intervals_from_cpoints( struct unur_par *par, struct unur_gen *ge
 
   /* reset area below distribution */
   gen->distr->set &= ~UNUR_DISTR_SET_PDFAREA;
-  unur_distr_cont_upd_pdfarea( gen->distr );
+  _unur_distr_cont_upd_pdfarea( gen->distr, TRUE );
 
   /* o.k. */
   return UNUR_SUCCESS;
@@ -773,7 +773,7 @@ _unur_tabl_run_dars( struct unur_gen *gen )
   /* check arguments */
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_TABL_GEN,UNUR_ERR_COOKIE);
 
-  /* there is no need to run DARS when the DARS factor is INFINITY */
+  /* there is no need to run DARS when the DARS factor is UNUR_INFINITY */
   if (_unur_FP_is_infinity(GEN->darsfactor))
     return UNUR_SUCCESS;
 

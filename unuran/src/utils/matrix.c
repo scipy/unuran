@@ -547,7 +547,7 @@ _unur_matrix_determinant ( int dim, const double *A )
      /*   determinant of A                                                   */
      /*									     */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                                    */
      /*----------------------------------------------------------------------*/
 {
 #define idx(a,b) ((a)*dim+(b))
@@ -557,7 +557,7 @@ _unur_matrix_determinant ( int dim, const double *A )
   double det;
   
   /* check arguments */
-  CHECK_NULL(A,  INFINITY);
+  CHECK_NULL(A, UNUR_INFINITY);
   
   /* one-dimensional case */
   if (dim==1) return A[0];
@@ -600,7 +600,7 @@ _unur_matrix_qf (int dim, double *x, double *A)
      /*   returns the result of x'Ax                                         */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                                    */
      /*----------------------------------------------------------------------*/
 {
 #define idx(a,b) ((a)*dim+(b))
@@ -609,11 +609,11 @@ _unur_matrix_qf (int dim, double *x, double *A)
   double sum,outersum;
   
   /* check arguments */
-  CHECK_NULL(x,INFINITY);
-  CHECK_NULL(A,INFINITY);
+  CHECK_NULL(x, UNUR_INFINITY);
+  CHECK_NULL(A, UNUR_INFINITY);
   if (dim<1) {
     _unur_error("matrix",UNUR_ERR_GENERIC,"dimension < 1");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
   
   outersum=0.;

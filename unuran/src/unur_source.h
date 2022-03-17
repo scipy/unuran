@@ -82,13 +82,6 @@
 #include <unur_struct.h>
 
 /*---------------------------------------------------------------------------*/
-/* Replacement functions                                                     */
-
-#if !HAVE_DECL_LOG1P
-#  include <specfunct/unur_specfunct_source.h> 
-#endif
-
-/*---------------------------------------------------------------------------*/
 /* Utilities used by almost all sources                                      */
 
 /* uniform random number generators */
@@ -114,6 +107,9 @@
 #include <utils/umath.h>
 #include <utils/umath_source.h>
 #include <utils/unur_math_source.h>
+
+/* special functions */
+#include <specfunct/unur_specfunct_source.h> 
 
 /* vectors */
 #include <utils/vector_source.h>

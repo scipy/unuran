@@ -219,8 +219,8 @@ _unur_ninv_check_par( struct unur_gen *gen )
   DISTR.trunc[1] = DISTR.domain[1];
 
   /* set bounds of U -- in respect to given bounds                          */
-  GEN->CDFmin = GEN->Umin = (DISTR.trunc[0] > -INFINITY) ? CDF(DISTR.trunc[0]) : 0.;
-  GEN->CDFmax = GEN->Umax = (DISTR.trunc[1] < INFINITY)  ? CDF(DISTR.trunc[1]) : 1.;
+  GEN->CDFmin = GEN->Umin = (DISTR.trunc[0] > -UNUR_INFINITY) ? CDF(DISTR.trunc[0]) : 0.;
+  GEN->CDFmax = GEN->Umax = (DISTR.trunc[1] < UNUR_INFINITY)  ? CDF(DISTR.trunc[1]) : 1.;
 
   if (_unur_FP_greater(GEN->CDFmin, GEN->CDFmax)) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"CDF not increasing");
@@ -364,11 +364,11 @@ _unur_ninv_create_table( struct unur_gen *gen )
     GEN->f_table[table_size-1-i] = CDF(GEN->table[table_size-1-i]);
 
     /* set new starting points for computing table points in next step */
-    if (GEN->table[i] > -INFINITY) {
+    if (GEN->table[i] > -UNUR_INFINITY) {
       GEN->s[0] = GEN->table[i];
       GEN->CDFs[0] = GEN->f_table[i];
     }
-    if (GEN->table[table_size-1-i] < INFINITY) {
+    if (GEN->table[table_size-1-i] < UNUR_INFINITY) {
       GEN->s[1] = GEN->table[table_size-1-i];
       GEN->CDFs[1] = GEN->f_table[table_size-1-i];
     }

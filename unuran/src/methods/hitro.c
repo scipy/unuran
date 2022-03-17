@@ -1280,8 +1280,8 @@ _unur_hitro_randomdir_sample_cvec( struct unur_gen *gen, double *vec )
     _unur_hitro_random_unitvector( gen, GEN->direction );
     
     /* --- l.h.s. and r.h.s. endpoint of line segment --- */
-    lb[1] = INFINITY;  
-    lb[0] = -INFINITY;
+    lb[1] = UNUR_INFINITY;  
+    lb[0] = -UNUR_INFINITY;
     for (i=0; i<d; i++) {
       lambda = (GEN->vumin[i] - GEN->state[i]) / GEN->direction[i];
       if (lambda>0 && lambda<lb[1]) lb[1] = lambda;

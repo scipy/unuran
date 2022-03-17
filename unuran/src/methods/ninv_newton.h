@@ -52,7 +52,7 @@ _unur_ninv_newton( const struct unur_gen *gen, double U )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double x;           /* point for netwon-iteration                   */
@@ -70,12 +70,12 @@ _unur_ninv_newton( const struct unur_gen *gen, double U )
   int x_goal, u_goal; /* whether precision goal is reached            */
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_NINV_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_NINV_GEN,UNUR_INFINITY);
 
   /* compute relative u resolution */
   rel_u_resolution = ( (GEN->u_resolution > 0.) ? 
                        (GEN->Umax - GEN->Umin) * GEN->u_resolution :
-                       INFINITY );
+                       UNUR_INFINITY );
 
   /* -- 1. initialize starting interval -- */
 

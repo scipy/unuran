@@ -105,17 +105,11 @@ int _unur_isinf (const double x);
 /* Other checks for infinity                                                 */
 
 /* +oo */
-#define _unur_FP_is_infinity(a)  ((a) >= INFINITY)
+#define _unur_FP_is_infinity(a)  ((a) >= UNUR_INFINITY)
 
 /* -oo */
-#define _unur_FP_is_minus_infinity(a)  ((a) <= -INFINITY)
+#define _unur_FP_is_minus_infinity(a)  ((a) <= -UNUR_INFINITY)
 
 /*---------------------------------------------------------------------------*/
 #endif  /* UNUR_FP_SOURCE_H_SEEN */
 /*---------------------------------------------------------------------------*/
-
-
-
-
-
-

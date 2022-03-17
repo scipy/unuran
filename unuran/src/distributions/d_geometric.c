@@ -51,7 +51,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/discr.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"

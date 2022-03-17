@@ -445,7 +445,7 @@ unur_distr_cxtrans_set_domain( struct unur_distr *cxt, double left, double right
      /*   error code   ... on error                                          */
      /*                                                                      */
      /* comment:                                                             */
-     /*   the new boundary points may be +/- INFINITY                        */
+     /*   the new boundary points may be +/- UNUR_INFINITY                   */
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
@@ -584,9 +584,9 @@ _unur_cdf_cxtrans( double x, const struct unur_distr *cxt )
   double alpha, s, mu;
 
   /* check arguments */
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.cdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.cdf, UNUR_INFINITY );
 
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
@@ -609,7 +609,7 @@ _unur_cdf_cxtrans( double x, const struct unur_distr *cxt )
 
   /* else: error */
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 
 } /* end of _unur_cdf_cxtrans() */
 
@@ -627,9 +627,9 @@ _unur_pdf_cxtrans( double x, const struct unur_distr *cxt )
   double alpha, s, mu;
 
   /* check arguments */
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.pdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.pdf, UNUR_INFINITY );
 
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
@@ -638,7 +638,7 @@ _unur_pdf_cxtrans( double x, const struct unur_distr *cxt )
   /* exponential transformation */
   if (_unur_isinf(alpha)==1) {
     if (x<=0.) 
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else {
       /* PDF(log(x))/x */
       double fx = PDF(s*log(x)+mu);
@@ -692,7 +692,7 @@ _unur_pdf_cxtrans( double x, const struct unur_distr *cxt )
 
   /* else: error */
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 
 } /* end of _unur_pdf_cxtrans() */
 
@@ -710,9 +710,9 @@ _unur_logpdf_cxtrans( double x, const struct unur_distr *cxt )
   double alpha, s, logs, mu;
 
   /* check arguments */
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.logpdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.logpdf, UNUR_INFINITY );
 
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
@@ -722,7 +722,7 @@ _unur_logpdf_cxtrans( double x, const struct unur_distr *cxt )
   /* exponential transformation */
   if (_unur_isinf(alpha)==1) {
     if (x<=0.) 
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else {
       /* logPDF(log(x))-log(x) */
       double logx = log(x);
@@ -737,7 +737,7 @@ _unur_logpdf_cxtrans( double x, const struct unur_distr *cxt )
     double ex = s * exp(x) + mu;
     if (! _unur_isfinite(ex)) {
       /* logPDF must be -infinity (the PDF must be zero) at +-infinity */
-      return -INFINITY;
+      return -UNUR_INFINITY;
     }
     else {
       double logfx = logPDF(ex);
@@ -757,7 +757,7 @@ _unur_logpdf_cxtrans( double x, const struct unur_distr *cxt )
     double phix = s * POW(x) + mu;
     if (! _unur_isfinite(phix)) {
       /* logPDF must be -infinity (the PDF must be zero) at +-infinity */
-      return -INFINITY;
+      return -UNUR_INFINITY;
     }
     else {
       double logfx = logPDF(phix);
@@ -767,7 +767,7 @@ _unur_logpdf_cxtrans( double x, const struct unur_distr *cxt )
 	/* we assume that the PDF of the transformed variable is zero. */
 	/* (This case is very unlikely to happen, but we should be     */
 	/* prepared for round-off error of the FPA.)                   */
-	return (_unur_isfinite(logfcx) ? logfcx : -INFINITY);
+	return (_unur_isfinite(logfcx) ? logfcx : -UNUR_INFINITY);
       }
       else 
 	/* if PDF(phix) is not finite, we assume that it is a pole */
@@ -777,7 +777,7 @@ _unur_logpdf_cxtrans( double x, const struct unur_distr *cxt )
 
   /* else: error */
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 
 } /* end of _unur_logpdf_cxtrans() */
 
@@ -796,10 +796,10 @@ _unur_dpdf_cxtrans( double x, const struct unur_distr *cxt )
   double alpha, s, mu;
 
   /* check arguments */
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.pdf, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.dpdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.pdf, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.dpdf, UNUR_INFINITY );
 
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
@@ -832,8 +832,8 @@ _unur_dpdf_cxtrans( double x, const struct unur_distr *cxt )
       double dfcx = s * (dfx * s*ex*ex + fx * ex);
       /* if PDF(ex) is not finite, we assume that it is a pole */
       if (! _unur_isfinite(fx) ) return _unur_dpdf_at_pole(cxt);
-      /* if derivate of PDF(ex) is not finite (or NaN) we return +/- INFINITY */
-      if (! _unur_isfinite(dfcx) ) return (dfx>0 ? INFINITY : -INFINITY);
+      /* if derivate of PDF(ex) is not finite (or NaN) we return +/- UNUR_INFINITY */
+      if (! _unur_isfinite(dfcx) ) return (dfx>0 ? UNUR_INFINITY : -UNUR_INFINITY);
       /* otherwise return computed value */
       return dfcx;
     }
@@ -874,7 +874,7 @@ _unur_dpdf_cxtrans( double x, const struct unur_distr *cxt )
 
   /* else: error */
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 
 } /* end of _unur_dpdf_cxtrans() */
 
@@ -895,10 +895,10 @@ _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
   double alpha, s, mu;
 
   /* check arguments */
-  CHECK_NULL( cxt, INFINITY );
-  CHECK_NULL( cxt->base, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.logpdf, INFINITY );
-  CHECK_NULL( cxt->base->data.cont.dlogpdf, INFINITY );
+  CHECK_NULL( cxt, UNUR_INFINITY );
+  CHECK_NULL( cxt->base, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.logpdf, UNUR_INFINITY );
+  CHECK_NULL( cxt->base->data.cont.dlogpdf, UNUR_INFINITY );
 
   alpha = CXT.ALPHA;
   s = CXT.SIGMA;
@@ -907,7 +907,7 @@ _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
   /* exponential transformation */
   if (_unur_isinf(alpha)==1) {
     if (x<=0.) 
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else {
       /* (dlogPDF(log(x)) - 1) / x */
       double logx = s*log(x)+mu;
@@ -924,7 +924,7 @@ _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
     double ex = s*exp(x)+mu;
     if (! _unur_isfinite(ex)) {
       /* dlogPDF must be -/+ infinity at +/-infinity */
-      return (x>1. ? -INFINITY : INFINITY);
+      return (x>1. ? -UNUR_INFINITY : UNUR_INFINITY);
     }
     else {
       double logfx = logPDF(ex);
@@ -944,7 +944,7 @@ _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
     double phix = s*POW(x)+mu;
     if (! _unur_isfinite(phix)) {
       /* dlogPDF must be -/+ infinity at +/-infinity */
-      return ((x>1. || (x>-1. && x < 0.)) ? -INFINITY : INFINITY);
+      return ((x>1. || (x>-1. && x < 0.)) ? -UNUR_INFINITY : UNUR_INFINITY);
     }
     else {
       double logfx = logPDF(phix);
@@ -955,7 +955,7 @@ _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
 	  /* of the transformed variable is zero.                            */
 	  /* (This case is very unlikely to happen, but we should be         */
 	  /* prepared for round-off error of the FPA.)                       */
-	  return ((x>1. || (x>-1. && x < 0.)) ? -INFINITY : INFINITY);
+	  return ((x>1. || (x>-1. && x < 0.)) ? -UNUR_INFINITY : UNUR_INFINITY);
 	}
 	return dlogfcx;
       }
@@ -967,7 +967,7 @@ _unur_dlogpdf_cxtrans( double x, const struct unur_distr *cxt )
 
   /* else: error */
   _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,""); 
-  return INFINITY;
+  return UNUR_INFINITY;
 
 } /* end of _unur_dlogpdf_cxtrans() */
 

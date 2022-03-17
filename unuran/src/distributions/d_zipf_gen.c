@@ -10,7 +10,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2000-2006 Wolfgang Hoermann and Josef Leydold             *
+ *   Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold             *
  *   Department of Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -36,7 +36,6 @@
 #include <unur_source.h>
 #include <methods/cstd.h>   /* for the definition of `UNUR_STDGEN_INVERSION' */
 #include <methods/dstd_struct.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 
 /*---------------------------------------------------------------------------*/
@@ -53,7 +52,7 @@ inline static int zipf_zet_init( struct unur_gen *gen );
 
 #define uniform()  _unur_call_urng(gen->urng) /* call for uniform prng       */
 
-#define MAX_gen_params  2      /* maximal number of parameters for generator */
+/* #define MAX_gen_params  2      maximal number of parameters for generator */
 
 /* parameters */
 #define rho  (DISTR.params[0])    /* shape */
@@ -147,6 +146,7 @@ _unur_stdgen_zipf_init( struct unur_par *par, struct unur_gen *gen )
  *****************************************************************************/
 
 /*---------------------------------------------------------------------------*/
+#define GEN_N_PARAMS  (2)
 #define c   (GEN->gen_param[0])
 #define d   (GEN->gen_param[1])
 /*---------------------------------------------------------------------------*/
@@ -158,9 +158,9 @@ zipf_zet_init( struct unur_gen *gen )
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_DSTD_GEN,UNUR_ERR_COOKIE);
 
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
 
   /* -X- setup code -X- */
@@ -205,6 +205,7 @@ _unur_stdgen_sample_zipf_zet( struct unur_gen *gen )
 } /* end of _unur_stdgen_sample_zipf_zet() */
 
 /*---------------------------------------------------------------------------*/
+#undef GEN_N_PARAMS
 #undef c
 #undef d
 /*---------------------------------------------------------------------------*/

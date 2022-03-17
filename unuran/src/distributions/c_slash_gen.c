@@ -37,7 +37,6 @@
 #include <methods/cstd_struct.h>
 #include <methods/x_gen_source.h>
 #include <distr/distr_source.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 #include "unur_distributions.h"
 
@@ -156,8 +155,8 @@ double
 _unur_stdgen_sample_slash_slash( struct unur_gen *gen )
 {
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
 
   /* -X- generator code -X- */
   return (_unur_sample_cont(NORMAL) / uniform());

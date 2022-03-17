@@ -399,14 +399,14 @@ _unur_empl_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,X;
   int J;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_EMPL_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_EMPL_GEN,UNUR_INFINITY);
 
   /* select uniformly an interval */
   U = _unur_call_urng(gen->urng) * (GEN->n_observ-1);

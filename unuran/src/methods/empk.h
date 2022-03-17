@@ -119,16 +119,17 @@
       @item
       In the case that the unknown underlying distribution is not continuous
       but discrete you should "turn off" the adding of the noise by setting:
-      @smallexample
-      unur_empk_set_smoothing(par, 0.)
-      @end smallexample
+
+      @example
+         unur_empk_set_smoothing(par, 0.)
+      @end example
 
       @item
       In the case that you are especially 
       interested in a fast sampling algorithm use the call
-      @smallexample
+      @example
       unur_empk_set_kernel(par, UNUR_DISTR_BOXCAR);
-      @end smallexample
+      @end example
       to change the used noise distribution from the default Gaussian
       distribution to the uniform distribution.
       @end enumerate
@@ -182,9 +183,9 @@ int unur_empk_set_kernelgen( UNUR_PAR *parameters, const UNUR_GEN *kernelgen, do
    @var{alpha} is used to compute the optimal bandwidth from the point of
    view of minimizing the mean integrated square error (MISE).
    It depends on the kernel K and is given by
-   @smallexample
+   @example
      alpha(K) = Var(K)^(-2/5)@{ \int K(t)^2 dt@}^(1/5)
-   @end smallexample
+   @end example
    For standard kernels (see above) alpha is computed by the algorithm.
 
    @var{kernvar} is the variance of the used kernel. It is only required 

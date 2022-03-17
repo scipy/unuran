@@ -262,7 +262,7 @@ int unur_distr_cxtrans_set_domain( UNUR_DISTR *distribution, double left, double
 /* 
    Set the left and right borders of the domain of the
    distribution. When the exponential transformation is used
-   (i.e. @var{alpha} is set to UNUR_INFINITY), then the domain must be
+   (i.e. @var{alpha} is set to @code{UNUR_INFINITY}), then the domain must be
    a subset of positive numbers.
    See unur_distr_cont_set_domain() for more details.
 

@@ -18,7 +18,7 @@
  *                                                                           *
  *   PARAMETERS:                                                             *
  *      double  il, ir       ... left and right boundary of domain           *
- *                               (default: +/- INFINITY)                     *
+ *                               (default: +/- UNUR_INFINITY)                *
  *      double  pdf_area     ... area below PDF (need not be 1)              *
  *                               (default: 1.)                               *
  *      double *pdf_param    ... parameters of PDF                           *
@@ -819,13 +819,13 @@ _unur_utdr_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double u,v,x,help,linx;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_UTDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_UTDR_GEN,UNUR_INFINITY);
 
   while (1) {
     /*2*/
@@ -882,13 +882,13 @@ _unur_utdr_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double u,v,x,help,linx,pdfx,squeezex;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_UTDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_UTDR_GEN,UNUR_INFINITY);
   
   while (1) {
     /*2*/
@@ -1036,7 +1036,7 @@ _unur_utdr_hat( struct unur_gen *gen )
 
     /* 1.2 */
     /** TODO: kann man das nicht loeschen ?? **/
-    if (/*GEN->il > -INFINITY &&*/ GEN->ttlx < GEN->il) { 
+    if (/*GEN->il > -UNUR_INFINITY &&*/ GEN->ttlx < GEN->il) { 
       /* this is the case of no left tail*/
       GEN->bl = GEN->il;
       GEN->al = 0.;
@@ -1099,7 +1099,7 @@ _unur_utdr_hat( struct unur_gen *gen )
 	 dl = ttly - GEN->al * GEN->ttlx;
 	 GEN->voll = -1./(GEN->al * GEN->hm);
 	 GEN->col = GEN->voll;
-	 if (GEN->il > -INFINITY)
+	 if (GEN->il > -UNUR_INFINITY)
 	   GEN->voll += 1./(GEN->al * (GEN->al * GEN->il + dl));
        }
      }
@@ -1107,7 +1107,7 @@ _unur_utdr_hat( struct unur_gen *gen )
 
     /* 1.3 */
     if(setupok) {
-      if (/*GEN->ir < INFINITY &&*/ GEN->ttrx > GEN->ir) {
+      if (/*GEN->ir < UNUR_INFINITY &&*/ GEN->ttrx > GEN->ir) {
 	/* this is the case of no right tail */
         GEN->br = GEN->ir;
         GEN->ar = 0.;
@@ -1168,7 +1168,7 @@ _unur_utdr_hat( struct unur_gen *gen )
 	    dr = ttry - GEN->ar * GEN->ttrx;
 	    volr = 1./(GEN->ar * GEN->hm);
 	    GEN->cor = volr;
-	    if (GEN->ir<INFINITY)
+	    if (GEN->ir < UNUR_INFINITY)
 	      volr -= 1./(GEN->ar * (GEN->ar * GEN->ir + dr));
 	  }
 	}

@@ -83,7 +83,7 @@ _unur_tdr_gw_starting_intervals( struct unur_gen *gen )
 	/* last (virtuel) interval in list.
 	   make shure that we will never use this segment */
 	iv->Asqueeze = iv->Ahat = iv->Ahatr = iv->sq = 0.;
-	iv->Acum = INFINITY;
+	iv->Acum = UNUR_INFINITY;
       }
       else
 	/* we need a pointer to the previous entry in the list */
@@ -338,7 +338,7 @@ _unur_tdr_gw_interval_parameter( struct unur_gen *gen, struct unur_tdr_interval 
      /* return:                                                              */
      /*   UNUR_SUCCESS    ... if successful                                  */
      /*   UNUR_ERR_SILENT ... do not add this construction point             */
-     /*   UNUR_ERR_INF    ... area = INFINITY                                */
+     /*   UNUR_ERR_INF    ... area = UNUR_INFINITY                           */
      /*   others          ... error (PDF not T-concave)                      */
      /*----------------------------------------------------------------------*/
 {
@@ -359,7 +359,7 @@ _unur_tdr_gw_interval_parameter( struct unur_gen *gen, struct unur_tdr_interval 
     return UNUR_ERR_GEN_CONDITION;
 
   /* squeeze and area below squeeze */
-  if (iv->Tfx > -INFINITY && iv->next->Tfx > -INFINITY) {
+  if (iv->Tfx > -UNUR_INFINITY && iv->next->Tfx > -UNUR_INFINITY) {
 
     /* we do not compute the slope when the construction points
        are too close. at least 8 significant digits should remain. */
@@ -374,7 +374,7 @@ _unur_tdr_gw_interval_parameter( struct unur_gen *gen, struct unur_tdr_interval 
        the following accepts PDFs with might be a little bit not T_concave */
     if ( ( (iv->sq > iv->dTfx       && (!_unur_FP_approx(iv->sq,iv->dTfx)) ) || 
 	   (iv->sq < iv->next->dTfx && (!_unur_FP_approx(iv->sq,iv->next->dTfx)) ) )
-	 && iv->next->dTfx < INFINITY ) {
+	 && iv->next->dTfx < UNUR_INFINITY ) {
       /* There are big troubles when the density is extremely small. 
 	 Then round-off errors may cancel out all significant figures and
 	 0 remains. Thus we simply ignore all violations when the 

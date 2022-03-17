@@ -67,7 +67,6 @@
 #include <distr/distr_source.h>
 #include <distr/distr.h>
 #include <distr/cvec.h>
-#include <specfunct/unur_specfunct_source.h>
 #include <utils/matrix_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
@@ -141,7 +140,7 @@ _unur_logpdf_multinormal( const double *x, UNUR_DISTR *distr )
   covar_inv = unur_distr_cvec_get_covar_inv(distr);
   if (covar_inv==NULL) 
     /* inverse of covariance matrix not available */
-    return INFINITY;
+    return UNUR_INFINITY;
 
   xx=0.; /* resetting exponential function argument */
   for (i=0; i<dim; i++) {
@@ -207,14 +206,14 @@ _unur_pdlogpdf_multinormal( const double *x, int coord, UNUR_DISTR *distr )
   /* check arguments */
   if (coord < 0 || coord >= dim) {
     _unur_warning(distr->name,UNUR_ERR_DISTR_DOMAIN,"invalid coordinate");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
   /* get inverse of covariance matrix */
   covar_inv = unur_distr_cvec_get_covar_inv(distr);
   if (covar_inv==NULL) 
     /* inverse of covariance matrix not available */
-    return INFINITY;
+    return UNUR_INFINITY;
 
   result = 0.;
   for (j=0; j<dim; j++)

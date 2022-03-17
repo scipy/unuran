@@ -10,7 +10,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2000-2006 Wolfgang Hoermann and Josef Leydold             *
+ *   Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold             *
  *   Department of Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -33,6 +33,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include <unur_source.h>
+#include <distr/distr.h>
 #include <urng/urng.h>
 #include "unur_methods_source.h"
 #include "x_gen_source.h"
@@ -110,12 +111,13 @@ static void _unur_unif_info( struct unur_gen *gen, int help );
 /*****************************************************************************/
 
 struct unur_par *
-unur_unif_new( const struct unur_distr *dummy ATTRIBUTE__UNUSED )
+unur_unif_new( const struct unur_distr *distr_dummy )
      /*----------------------------------------------------------------------*/
      /* get default parameters                                               */
      /*                                                                      */
      /* parameters:                                                          */
-     /*   dummy ... dummy pointer to distribution object (not used!)         */
+     /*   distr_dummy ... pointer to a distribution object                   */
+     /*                   it may be NULL.                                    */
      /*                                                                      */
      /* return:                                                              */
      /*   default parameters (pointer to structure)                          */
@@ -129,12 +131,21 @@ unur_unif_new( const struct unur_distr *dummy ATTRIBUTE__UNUSED )
 { 
   struct unur_par *par;
 
+  /* check distribution */
+  if (distr_dummy != NULL) {
+    /* we do not need this the distribution at all. */ 
+    /* but if it is provided it must be a continuous distribution. */ 
+    if (distr_dummy->type != UNUR_DISTR_CONT) {
+      _unur_error(GENTYPE,UNUR_ERR_DISTR_INVALID,""); return NULL; }
+    COOKIE_CHECK(distr_dummy,CK_DISTR_CONT,NULL);
+  }
+
   /* allocate structure */
   par = _unur_par_new( sizeof(struct unur_unif_par) );
   COOKIE_SET(par,CK_UNIF_PAR);
 
-  /* there is no need for a distribution object */
-  par->distr = NULL;
+  /* copy input */
+  par->distr    = distr_dummy;     /* pointer to distribution object         */
 
   /* set default values */
   par->method   = UNUR_METH_UNIF;  /* method and default variant             */
@@ -335,12 +346,12 @@ _unur_unif_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_UNIF_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_UNIF_GEN,UNUR_INFINITY);
 
   /* sample uniform random number */
   return _unur_call_urng(gen->urng);

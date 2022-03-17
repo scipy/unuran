@@ -431,7 +431,7 @@ _unur_mixt_check_par( struct unur_gen *gen )
     }
 
     /* we only can use inversion method if all generators use inversion method */
-    if (GEN->is_inversion && (! _unur_gen_is_inversion (gen->COMP[i]))) {
+    if (GEN->is_inversion && (! unur_gen_is_inversion (gen->COMP[i]))) {
       _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"component does not implement inversion");
       return UNUR_ERR_GEN_INVALID;
     }
@@ -515,14 +515,14 @@ _unur_mixt_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   struct unur_gen *comp;
   int J;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_MIXT_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_MIXT_GEN,UNUR_INFINITY);
 
   /* sample index */
   J = unur_sample_discr(gen->INDEX);
@@ -556,22 +556,22 @@ _unur_mixt_sample_inv( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   double U, recycle;
   int J;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_MIXT_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_MIXT_GEN,UNUR_INFINITY);
 
   /* sample index */
   U = _unur_call_urng(gen->urng);
   J =unur_dgt_eval_invcdf_recycle( gen->INDEX, U, &recycle );
 
-  /* the resolution of recycle is less than that of U. */
-  /* the values 0. and 1. may be result in INFINITY.   */
-  /* thus we make a small perturbation in this case.   */
+  /* the resolution of recycle is less than that of U.    */
+  /* the values 0. and 1. may be result in UNUR_INFINITY. */
+  /* thus we make a small perturbation in this case.      */
   if (_unur_iszero(recycle)) recycle = DBL_MIN;
   if (_unur_isone(recycle))  recycle = 1. - DBL_EPSILON;
 
@@ -595,19 +595,19 @@ unur_mixt_eval_invcdf( const struct unur_gen *gen, double u )
      /*   double (inverse CDF)                                               */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   double recycle;
   int J;
   
   /* check arguments */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( ! (gen->method == UNUR_METH_MIXT && GEN->is_inversion) ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
-  COOKIE_CHECK(gen,CK_MIXT_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_MIXT_GEN,UNUR_INFINITY);
 
   if ( ! (u>0. && u<1.)) {
     if ( ! (u>=0. && u<=1.)) {
@@ -621,9 +621,9 @@ unur_mixt_eval_invcdf( const struct unur_gen *gen, double u )
   /* get index */
   J =unur_dgt_eval_invcdf_recycle( gen->INDEX, u, &recycle );
 
-  /* the resolution of recycle is less than that of U. */
-  /* the values 0. and 1. may be result in INFINITY.   */
-  /* thus we make a small perturbation in this case.   */
+  /* the resolution of recycle is less than that of U.    */
+  /* the values 0. and 1. may be result in UNUR_INFINITY. */
+  /* thus we make a small perturbation in this case.      */
   if (_unur_iszero(recycle)) recycle = DBL_MIN;
   if (_unur_isone(recycle))  recycle = 1. - DBL_EPSILON;
 
@@ -693,8 +693,8 @@ _unur_mixt_get_boundary( struct unur_gen *gen )
   struct unur_gen *comp;
 
   /* initialize boundary values for mixture */
-  bd_left = INFINITY;
-  bd_right = -INFINITY;
+  bd_left = UNUR_INFINITY;
+  bd_right = -UNUR_INFINITY;
 
   for (i=0; i<gen->N_COMP; i++) {
     comp = gen->COMP[i];
@@ -716,8 +716,8 @@ _unur_mixt_get_boundary( struct unur_gen *gen )
       
     default:
       /* cannot estimate boundary */
-      comp_left = -INFINITY;
-      comp_right = INFINITY;
+      comp_left = -UNUR_INFINITY;
+      comp_right = UNUR_INFINITY;
     }
 
     /* check for overlapping domains */

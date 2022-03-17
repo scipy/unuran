@@ -92,7 +92,7 @@ struct unur_pinv_gen {
   int sright;              /* whether to search for right boundary point     */
 
   double area;             /* approximate area below PDF                     */ 
-  double logPDFconstant;   /* rescaling constant for logPDF                  */
+  /* double logPDFconstant;  rescaling constant for logPDF: Disabled!        */
 
   struct unur_lobatto_table *aCDF; /* polynomial approximation of CDF        */
 };

@@ -1,13 +1,13 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl $Id: configure.ac 5330 2011-04-19 10:50:18Z leydold $
+dnl $Id: configure.ac 7972 2022-03-16 13:37:10Z leydold $
 
 dnl Initialize.
-AC_PREREQ(2.63)
-AC_INIT([unuran],[1.8.1],[unuran@statmath.wu.ac.at])
+AC_PREREQ([2.71])
+AC_INIT([unuran],[1.9.0],[unuran@statmath.wu.ac.at])
 AC_CONFIG_AUX_DIR(autoconf)
-AM_INIT_AUTOMAKE([unuran],[1.8.1])
 AC_CONFIG_SRCDIR([src/unuran_config.h])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
+AM_INIT_AUTOMAKE([-Wall -Wno-extra-portability foreign])
 
 dnl Library versioning (current:revision:age)
 dnl See the libtool manual for an explanation of the numbers
@@ -39,8 +39,9 @@ dnl unuran-1.6.0   13:0:0
 dnl unuran-1.7.0   14:0:0
 dnl unuran-1.8.0   15:0:0
 dnl unuran-1.8.1   15:0:0
+dnl unuran-1.9.0   16:0:0
 
-UNURAN_LT_VERSION="15:0:0"
+UNURAN_LT_VERSION="16:0:0"
 AC_SUBST([UNURAN_LT_VERSION])
 
 dnl use maintainer mode
@@ -54,6 +55,7 @@ AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CPP
+AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_CHECK_TOOL(AR, ar, :)
@@ -113,25 +115,21 @@ dnl Optional support for Rmath standalone library
 AX_ADD_RMATH()
 
 dnl Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS([float.h limits.h stdlib.h string.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([float.h limits.h stdlib.h string.h unistd.h])
+AC_CHECK_HEADERS_ONCE([sys/time.h])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
-AC_HEADER_TIME
+
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS([floor gettimeofday pow sqrt strcasecmp strchr strtol strtoul])
+AC_CHECK_FUNCS([alarm floor gettimeofday memset pow sqrt strcasecmp strchr strtol strtoul])
 
 dnl For the following function replacements exist
-AH_BOTTOM([/* Substitute UNU.RAN functions for missing system functions */])
-
 AC_CHECK_DECLS(log1p,,,[#include <math.h>])
-AH_BOTTOM([#if !HAVE_DECL_LOG1P
-#define log1p _unur_log1p
-#endif])
+AC_CHECK_DECLS(hypot,,,[#include <math.h>])
 
 dnl Checks for GNU extensions
 AC_CHECK_DECLS([getopt, snprintf, vsnprintf])
@@ -142,14 +140,17 @@ AC_CHECK_DECLS(isinf,,,[#include <math.h>])
 AC_CHECK_DECLS(isnan,,,[#include <math.h>])
 AC_CHECK_DECLS(INFINITY,,,[#include <math.h>])
 AC_CHECK_DECLS(HUGE_VAL,,,[#include <math.h>])
+AC_CHECK_DECLS(DBL_MAX,,,[#include <float.h>])
+
+dnl Check IEEE comparisons, whether "x != x" is true for NaNs
+AX_IEEE_COMP
+dnl Check whether 1./0. works and results in "infinity"
+AX_DIVIDE_BY_ZERO
 
 dnl Check for alarm and signal handler
 AC_CHECK_DECLS(alarm,,,[#include <unistd.h>])
 AC_CHECK_DECLS(signal,,,[#include <signal.h>])
 AC_CHECK_FUNCS([alarm signal])
-
-dnl Check IEEE comparisons, whether "x != x" is true for NaNs
-AX_IEEE_COMP
 
 dnl Some routines are deprecated.
 dnl Compiling and linking these into the library can be controlled
@@ -271,7 +272,6 @@ if test X"$GCC" = Xyes ; then
    CC_FLAGS="$CC_FLAGS -Wall -Wextra $EXTRA_GCC_FLAGS"
 fi
 
-
 case "${host_os}" in
 linux*)
 	case  "${CC}" in
@@ -285,6 +285,16 @@ linux*)
 esac
 
 AC_SUBST(AM_CFLAGS,[$CC_FLAGS])
+
+dnl MinGW (Win32)
+case "${host}" in
+  *-*-mingw*)
+    have_mingw=yes
+    ;;
+  *)
+    have_mingw=no
+esac
+AM_CONDITIONAL(HAVE_MINGW, test "$have_mingw" = "yes")
 
 
 dnl create Makefiles for source
@@ -344,7 +354,3 @@ AC_MSG_RESULT([
 ])
 
 dnl -----------------------------------------
-
-
-
-

@@ -169,14 +169,16 @@ UNUR_PAR *_unur_str2par( const UNUR_DISTR *distribution, const char *method, str
    For details see the following description of each block.
 
    In the following example
-   @smallexample
-   distr = normal(3.,0.75); domain = (0,inf) & method = tdr; c = 0 
-   @end smallexample
+
+   @example
+      distr = normal(3.,0.75); domain = (0,inf) & method = tdr; c = 0 
+   @end example
+
+   @noindent
    we have a distribution block for the truncated normal distribution
    with mean 3 and standard deviation 0.75 on domain (0,infinity);
    and block for choosing method TDR with parameter c set to 0.
 
-   @sp 1
    The @code{<key>=<value>} pairs that follow the first (initial) pair
    in each block are used to set parameters.
    The name of the parameter is given by the @code{<key>} string. It is
@@ -186,15 +188,18 @@ UNUR_PAR *_unur_str2par( const UNUR_DISTR *distribution, const char *method, str
    set, separated by commata @code{,}.
    There are three types of parameters:
    @table @emph
-   @item string @code{"@dots{}"}
+   @item string @code{"@dots{}"} or @code{'@dots{}'}
       i.e. any sequence of characters enclosed by double quotes 
-      @code{"@dots{}"}, 
+      @code{"@dots{}"} or single quotes @code{'@dots{}'}
+      (there is no distinction between double quotes @code{"} and
+      single quotes @code{'}).
    @item list @code{(@dots{},@dots{})}
       i.e. list of @emph{numbers}, separated by commata @code{,},
-      enclosed in parenthesis @code{(...)}, and
+      enclosed in parenthesis @code{(...)}.
    @item number
-      a sequence of characters that is not enclosed by quotes
-      @code{"@dots{}"} or parenthesis @code{(...)}. 
+      a sequence of characters that is not enclosed by double quotes
+      @code{"@dots{}"}, single quotes @code{'@dots{}'},
+      or parenthesis @code{(...)}. 
       It is interpreted as float or integer depending on the type of 
       the corresponding parameter.
    @end table
@@ -302,28 +307,34 @@ UNUR_PAR *_unur_str2par( const UNUR_DISTR *distribution, const char *method, str
    between the name of the standard distribution and the opening
    parenthesis @code{(} of this list. E.g., to get a beta distribution,
    use
-   @smallexample
+
+   @example
       distr = beta(2,4)
-   @end smallexample
+   @end example
 
    To get an object for a discrete distribution with probability
    vector (0.5,0.2,0.3), use 
-   @smallexample
+
+   @example
       distr = discr; pv = (0.5,0.2,0.3)
-   @end smallexample
+   @end example
 
    It is also possible to set a PDF, PMF, or CDF using a string.
    E.g., to create a continuous distribution with PDF proportional to 
    @code{exp(-sqrt(2+(x-1)^2) + (x-1))} and domain (0,inf) use
-   @smallexample
+
+   @example
       distr = cont; pdf = "exp(-sqrt(2+(x-1)^2) + (x-1))"
-   @end smallexample
+   @end example
+
+   @noindent
    Notice: If this string is used in an unur_str2distr() or
    unur_str2gen() call the double quotes @code{"} must be protected by
    @code{\"}. Alternatively, single quotes may be used instead 
-   @smallexample
+
+   @example
       distr = cont; pdf = 'exp(-sqrt(2+(x-1)^2) + (x-1))'
-   @end smallexample
+   @end example
 
    For the details of function strings see
    @ref{StringFunct,,Function String}.
@@ -343,9 +354,10 @@ UNUR_PAR *_unur_str2par( const UNUR_DISTR *distribution, const char *method, str
    The key @code{method} is obligatory, it must be the first key and its
    value is the name of a method suitable for the choosen standard
    distribution. E.g., if method AROU is chosen, use
-   @smallexample
+
+   @example
       method = arou
-   @end smallexample
+   @end example
 
    Of course the all following keys dependend on the method choosen at
    first. All corresponding @command{set} calls of UNU.RAN are available
@@ -354,9 +366,12 @@ UNUR_PAR *_unur_str2par( const UNUR_DISTR *distribution, const char *method, str
    @command{unur_arou_set_max_sqhratio} to set a parameter of method AROU.
    To call this function via the string-interface, the
    key @code{max_sqhratio} can be used:
-   @smallexample
+
+   @example
       max_sqhratio = 0.9
-   @end smallexample
+   @end example
+
+   @noindent
    Additionally the keyword @code{debug} can be used to set debugging
    flags (see @ref{Debug,,Debugging}, for details).
    

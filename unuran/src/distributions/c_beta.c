@@ -69,7 +69,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -127,7 +126,7 @@ _unur_pdf_beta(double x, const UNUR_DISTR *distr)
     return exp(-LOGNORMCONSTANT);
 
   if ((_unur_iszero(x) && p<1.) || (_unur_isone(x) && q<1.))
-    return INFINITY;
+    return UNUR_INFINITY;
 
   /* out of support */
   return 0.;
@@ -155,10 +154,10 @@ _unur_logpdf_beta(double x, const UNUR_DISTR *distr)
     return (-LOGNORMCONSTANT);
 
   if ((_unur_iszero(x) && p<1.) || (_unur_isone(x) && q<1.))
-    return INFINITY;
+    return UNUR_INFINITY;
 
   /* out of support */
-  return -INFINITY;
+  return -UNUR_INFINITY;
 
 } /* end of _unur_logpdf_beta() */
 
@@ -186,7 +185,7 @@ _unur_dpdf_beta(double x, const UNUR_DISTR *distr)
     return exp(-LOGNORMCONSTANT)/(b-a);
 
   if (_unur_iszero(x) && p<2.)
-    return (p>1. ? INFINITY : -INFINITY);
+    return (p>1. ? UNUR_INFINITY : -UNUR_INFINITY);
 
   /*   if (_unur_iszero(x) && p>2.) */
   /*     return 0.; */
@@ -198,7 +197,7 @@ _unur_dpdf_beta(double x, const UNUR_DISTR *distr)
     return -exp(-LOGNORMCONSTANT)/(b-a);
 
   if (_unur_isone(x) && q<2.)
-    return (q>1. ? -INFINITY : INFINITY);
+    return (q>1. ? -UNUR_INFINITY : UNUR_INFINITY);
 
   /*   if (_unur_isone(x) && q>2.) */
   /*     return 0.; */
@@ -226,22 +225,22 @@ _unur_dlogpdf_beta(double x, const UNUR_DISTR *distr)
     return (((p-1.)/x - (q-1.)/(1.-x)) / (b-a));
 
   if (_unur_iszero(x) && p<1.)
-    return -INFINITY;
+    return -UNUR_INFINITY;
 
   if (_unur_iszero(x) && _unur_isone(p))
     return (-(q-1.)/((1.-x)*(b-a)));
 
   if (_unur_iszero(x) && p>1.)
-    return INFINITY;
+    return UNUR_INFINITY;
 
   if (_unur_isone(x) && q<1.)
-    return INFINITY;
+    return UNUR_INFINITY;
 
   if (_unur_isone(x) && _unur_isone(q))
     return ((p-1.)/(b-a));
 
   if (_unur_isone(x) && q>1.)
-    return -INFINITY;
+    return -UNUR_INFINITY;
 
   /* out of support */
   return 0.;
@@ -304,7 +303,7 @@ _unur_upd_mode_beta( UNUR_DISTR *distr )
   
   else {
     /* p.d.f. is not unimodal */
-    DISTR.mode = INFINITY;
+    DISTR.mode = UNUR_INFINITY;
     return UNUR_ERR_DISTR_PROP;
   }
 

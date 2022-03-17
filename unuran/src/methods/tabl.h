@@ -151,7 +151,7 @@
       number generator via the unur_set_urng_aux() call. (Notice that
       this must be done after a possible unur_set_urng() call.)
       However, this only works when immediate acceptance is switched
-      of by a unur_tabl_set_variant_ia() call.
+      off by a unur_tabl_set_variant_ia() call.
 
    =END
 

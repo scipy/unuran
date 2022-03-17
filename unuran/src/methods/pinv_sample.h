@@ -31,13 +31,13 @@ _unur_pinv_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,X;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_PINV_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_INFINITY);
 
   /* sample from U(0,1) */
   U = _unur_call_urng(gen->urng);
@@ -68,14 +68,14 @@ _unur_pinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
      /*   double (approximate inverse CDF)                                   */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   int i;
   double x,un;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_PINV_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_INFINITY);
 
   /* rescale for range (0, Umax) */
   un = u * GEN->Umax;
@@ -112,18 +112,18 @@ unur_pinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
      /*   double (approximate inverse CDF)                                   */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   double x;
 
   /* check arguments */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_PINV ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
-  COOKIE_CHECK(gen,CK_PINV_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_INFINITY);
 
   if ( ! (u>0. && u<1.)) {
     if ( ! (u>=0. && u<=1.)) {
@@ -160,21 +160,21 @@ unur_pinv_eval_approxcdf( const struct unur_gen *gen, double x )
      /*   double (approximate CDF)                                           */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_PINV ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
-  COOKIE_CHECK(gen,CK_PINV_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_PINV_GEN,UNUR_INFINITY);
 
   /* we need the table of CDF values */
   if ( (gen->variant & PINV_VARIANT_PDF) && GEN->aCDF == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GENERIC,"'keepcdf' not set");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
   /* argument inside domain ? */

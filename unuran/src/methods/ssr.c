@@ -791,13 +791,13 @@ _unur_ssr_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,X,xx,y;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SSR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SSR_GEN,UNUR_INFINITY);
 
   while (1) {
     /* uniform ~U(0,1) */
@@ -853,13 +853,13 @@ _unur_ssr_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,X,xx,fx,y;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SSR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SSR_GEN,UNUR_INFINITY);
 
   while (1) {
     /* uniform ~U(0,1) */
@@ -967,13 +967,13 @@ _unur_ssr_hat( struct unur_gen *gen )
     GEN->al = (DISTR.BD_LEFT  < DISTR.mode) ? (GEN->Fmode * DISTR.area) : 0.;
     GEN->ar = (DISTR.BD_RIGHT > DISTR.mode) ? (GEN->al + DISTR.area) : GEN->A;
     /* Compute areas below hat in left tails and inside domain of PDF */
-    if ( (DISTR.BD_LEFT > -INFINITY) &&
+    if ( (DISTR.BD_LEFT > -UNUR_INFINITY) &&
 	 (DISTR.BD_LEFT < DISTR.mode) )
       GEN->Aleft = GEN->vl * GEN->vl / (DISTR.mode - DISTR.BD_LEFT);
     else
       GEN->Aleft = 0.;
     
-    if ( (DISTR.BD_RIGHT < INFINITY) &&
+    if ( (DISTR.BD_RIGHT < UNUR_INFINITY) &&
 	 (DISTR.BD_RIGHT > DISTR.mode) )
       GEN->Ain = GEN->A - GEN->vr * GEN->vr / (DISTR.BD_RIGHT - DISTR.mode);
     else
@@ -991,7 +991,7 @@ _unur_ssr_hat( struct unur_gen *gen )
     GEN->al = DISTR.area;
     GEN->ar = 3 * DISTR.area;
     /* Compute areas below hat in left tails and inside domain of PDF */
-    if (DISTR.BD_LEFT > -INFINITY) {
+    if (DISTR.BD_LEFT > -UNUR_INFINITY) {
       left = DISTR.BD_LEFT - DISTR.mode;
       GEN->Aleft = (GEN->xl > left) 
 	? (GEN->vl * GEN->vl / (-left)) 
@@ -1000,7 +1000,7 @@ _unur_ssr_hat( struct unur_gen *gen )
     else 
       GEN->Aleft = 0.;
     
-    if (DISTR.BD_RIGHT < INFINITY) {
+    if (DISTR.BD_RIGHT < UNUR_INFINITY) {
       right = DISTR.BD_RIGHT - DISTR.mode;
       GEN->Ain = (GEN->xr < right) 
 	? (GEN->A - GEN->vr * GEN->vr / right)
@@ -1146,7 +1146,7 @@ _unur_ssr_info( struct unur_gen *gen, int help )
   _unur_string_append(info,"\n");
 
   /* method */
-  _unur_string_append(info,"method: SSR (Simple Ratio-Of-Uniforms)\n");
+  _unur_string_append(info,"method: SSR (Simple Setup Rejection)\n");
   if (gen->set & SSR_SET_CDFMODE)
     _unur_string_append(info,"   use CDF at mode\n");
   if (gen->variant & SSR_VARFLAG_SQUEEZE)

@@ -90,11 +90,6 @@ struct unur_gen *_unur_generic_clone( const struct unur_gen *gen, const char *ty
 void _unur_generic_free( struct unur_gen *gen );
 
 /*---------------------------------------------------------------------------*/
-/* check for type of generator object                                        */
-
-int _unur_gen_is_inversion ( struct unur_gen *gen );
-
-/*---------------------------------------------------------------------------*/
 /* set and clone arrays of generator objects                                 */
 
 struct unur_gen **_unur_gen_list_set( struct unur_gen *gen, int n_gen_list );

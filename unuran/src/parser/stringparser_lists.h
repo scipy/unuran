@@ -70,14 +70,18 @@ _unur_str_distr_new( char *distribution )
   struct unur_distr *distr = NULL;    /* pointer to distribution object      */
   char distr_unknown;
 
+#ifdef UNUR_ENABLE_LOGGING
   char *name;                         /* pointer to name of distribution     */
+#endif
   char *params;                       /* pointer to parameter list of distr  */
 
   double *darray = NULL;              /* array of arguments for distribution */
   int n_darray = 0;                   /* size of array of parameters         */
 
+#ifdef UNUR_ENABLE_LOGGING
   /* name of distribution */
   name = distribution;
+#endif
 
   /* get parameter list */
   params = strchr(distribution,'(');

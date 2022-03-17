@@ -66,8 +66,8 @@ _unur_util_find_max( struct unur_funct_generic fs, /* function structure */
      /*   guess_max    ... initial guess for max position                    */
      /*                                                                      */
      /* return:                                                              */
-     /*   x        ... approximate position of max on success                */
-     /*   INFINITY ... on error                                              */
+     /*   x             ... approximate position of max on success           */
+     /*   UNUR_INFINITY ... on error                                         */
      /*----------------------------------------------------------------------*/
 {
 #define MAX_SRCH (100)
@@ -190,7 +190,7 @@ _unur_util_find_max( struct unur_funct_generic fs, /* function structure */
   
   /* no success -- exit routine  */   
   if( _unur_FP_same(fx[1], 0.0) )
-     return INFINITY; /* can't find max in flat region  */
+     return UNUR_INFINITY; /* can't find max in flat region  */
 
   /* x[1] has f > 0 or routines already terminated */ 
 
@@ -266,7 +266,7 @@ _unur_util_find_max( struct unur_funct_generic fs, /* function structure */
   }
   else {
     /* computing max did not work */
-    return INFINITY; 
+    return UNUR_INFINITY; 
   }
 
   /* o.k. */
@@ -336,7 +336,7 @@ _unur_util_find_max( struct unur_funct_generic fs, /* function structure */
  *                                                                           *
  *****************************************************************************/
 
-/* in case of any error INFINITY is returned */
+/* in case of any error UNUR_INFINITY is returned */
 
 double
 _unur_util_brent(            /* An estimate to the min or max location */
@@ -362,10 +362,10 @@ _unur_util_brent(            /* An estimate to the min or max location */
   const double r = (3.-sqrt(5.0))/2;    /* Gold section ratio                */
 
   /* check arguments */
-  CHECK_NULL(fs.f,INFINITY);
+  CHECK_NULL(fs.f, UNUR_INFINITY);
   if ( tol < 0. || b <= a || c <= a || b <= c) {
     _unur_error("CMAX",UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
 
@@ -457,7 +457,7 @@ _unur_util_brent(            /* An estimate to the min or max location */
   }                /* ===== End of for loop ===== */
 
   /* maximal number of iterations exceeded */
-  return INFINITY;
+  return UNUR_INFINITY;
 
 #undef f
 #undef MAXIT

@@ -235,8 +235,8 @@ unur_distr_condi_set_condition( struct unur_distr *condi, const double *pos, con
     }
     else {
       /* arbitrary direction: we ignore given domain */
-      CONDI.trunc[0] = CONDI.domain[0] = -INFINITY;
-      CONDI.trunc[1] = CONDI.domain[1] = INFINITY;
+      CONDI.trunc[0] = CONDI.domain[0] = -UNUR_INFINITY;
+      CONDI.trunc[1] = CONDI.domain[1] = UNUR_INFINITY;
     }
   }
 

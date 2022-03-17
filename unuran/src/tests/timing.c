@@ -108,8 +108,8 @@ unur_test_timing( struct unur_par *par,
      /*----------------------------------------------------------------------*/
 {
   struct unur_gen *gen;
-  int k;
-  double x;
+  int k ATTRIBUTE__UNUSED;
+  double x ATTRIBUTE__UNUSED;
   double *vec = NULL;
   double time_uniform, time_exponential;
   double time_start, *time_gen;
@@ -249,8 +249,8 @@ unur_test_timing_R( struct unur_par *par, const char *distrstr, const char *meth
   struct unur_gen   *gen_tmp   = NULL; /* temporary generator object         */
   struct unur_slist *mlist     = NULL; /* auxiliary table for _unur_str2par()*/
 
-  int k;
-  double x;
+  int k ATTRIBUTE__UNUSED;
+  double x ATTRIBUTE__UNUSED;
   double *vec = NULL;
 
   double time_start, *time_gen = NULL;
@@ -484,8 +484,9 @@ double unur_test_timing_total_run( const struct unur_par *par, int samplesize, i
   int n, rep;
   double time_total;           /* total time for sampling                    */
   double time_start;
-  int i,k;
-  double x;
+  int i;
+  int k ATTRIBUTE__UNUSED;
+  double x ATTRIBUTE__UNUSED;
   double *vec = NULL;
 
   /* check parameter */
@@ -578,7 +579,7 @@ unur_test_timing_uniform( const struct unur_par *par, int log10_samplesize )
   struct unur_gen *gen_urng;
   static double uniform_time = -1.;
   double time[TIMING_REPETITIONS];
-  double x;
+  double x ATTRIBUTE__UNUSED;
   int j,n;
 
   if (uniform_time <= 0.) {  
@@ -644,7 +645,7 @@ unur_test_timing_exponential( const struct unur_par *par, int log10_samplesize )
   struct unur_gen   *unit_gen;
   static double exponential_time = -1.;
   double time[TIMING_REPETITIONS];
-  double x;
+  double x ATTRIBUTE__UNUSED;
   int j,n;
 
   if (exponential_time <= 0.) {  

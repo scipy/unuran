@@ -37,7 +37,6 @@
 #include <methods/cstd_struct.h>
 #include <methods/x_gen_source.h>
 #include <distr/distr_source.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 #include "unur_distributions.h"
 
@@ -55,7 +54,7 @@ inline static int gamma_gd_init( struct unur_gen *gen );
 #define GEN       ((struct unur_cstd_gen*)gen->datap) /* data for generator object */
 #define DISTR     gen->distr->data.cont /* data for distribution in generator object */
 
-#define MAX_gen_params  8      /* maximal number of parameters for generator */
+/* #define MAX_gen_params  (8)    maximal number of parameters for generator */
 
 #define uniform()  _unur_call_urng(gen->urng) /* call for uniform prng       */
 
@@ -143,6 +142,7 @@ _unur_stdgen_gamma_init( struct unur_par *par, struct unur_gen *gen )
  *****************************************************************************/
 
 /*---------------------------------------------------------------------------*/
+#define GEN_N_PARAMS (3)
 #define aa  GEN->gen_param[0]
 #define bb  GEN->gen_param[1]
 #define cc  GEN->gen_param[2]
@@ -155,9 +155,9 @@ gamma_gll_init( struct unur_gen *gen )
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
 
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
 
   /* -X- setup code -X- */
@@ -178,8 +178,8 @@ _unur_stdgen_sample_gamma_gll( struct unur_gen *gen )
   double u1,u2,v,r,z;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
 
   while (1) {
     u1 = uniform();
@@ -198,6 +198,7 @@ _unur_stdgen_sample_gamma_gll( struct unur_gen *gen )
 } /* end of _unur_stdgen_sample_gamma_gll() */
 
 /*---------------------------------------------------------------------------*/
+#undef GEN_N_PARAMS
 #undef aa
 #undef bb
 #undef cc
@@ -228,6 +229,7 @@ _unur_stdgen_sample_gamma_gll( struct unur_gen *gen )
  *****************************************************************************/
 
 /*---------------------------------------------------------------------------*/
+#define GEN_N_PARAMS (1)
 #define b   GEN->gen_param[0]
 /*---------------------------------------------------------------------------*/
 
@@ -239,9 +241,9 @@ gamma_gs_init( struct unur_gen *gen )
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
 
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
 
   /* -X- setup code -X- */
@@ -259,8 +261,8 @@ _unur_stdgen_sample_gamma_gs( struct unur_gen *gen )
   double X, p;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
 
   while (1) {
     p = b * uniform();
@@ -282,8 +284,10 @@ _unur_stdgen_sample_gamma_gs( struct unur_gen *gen )
 } /* end of _unur_stdgen_sample_gamma_gs() */
 
 /*---------------------------------------------------------------------------*/
+#undef GEN_N_PARAMS
 #undef b
 /*---------------------------------------------------------------------------*/
+#define GEN_N_PARAMS (8)
 #define ss   GEN->gen_param[0]
 #define s    GEN->gen_param[1]
 #define d    GEN->gen_param[2]
@@ -330,9 +334,9 @@ gamma_gd_init( struct unur_gen *gen )
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
 
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
 
   /* -X- setup code -X- */
@@ -393,8 +397,8 @@ _unur_stdgen_sample_gamma_gd( struct unur_gen *gen )
   double q,sign_U,t,v,w,x;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
 
   do {
 
@@ -469,6 +473,7 @@ _unur_stdgen_sample_gamma_gd( struct unur_gen *gen )
 } /* end of _unur_stdgen_sample_gamma_gd() */
 
 /*---------------------------------------------------------------------------*/
+#undef GEN_N_PARAMS
 #undef ss
 #undef s 
 #undef d 

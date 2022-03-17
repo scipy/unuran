@@ -185,7 +185,7 @@ int unur_nrou_set_r( UNUR_PAR *parameters, double r );
 
 int unur_nrou_set_center( UNUR_PAR *parameters, double center );
 /* 
-   Set the center (@unurmath{\mu}) of the PDF. 
+   Set the center @unurmath{\mu} of the PDF. 
    If not set the center of the given distribution object is used.
 
    Default: see unur_distr_cont_set_center().

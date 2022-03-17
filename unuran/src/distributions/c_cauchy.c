@@ -52,7 +52,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -249,9 +248,11 @@ _unur_set_params_cauchy( UNUR_DISTR *distr, const double *params, int n_params )
   switch (n_params) {
   case 2:
     DISTR.lambda = lambda;
+    /* FALLTHROUGH */
   case 1:
     DISTR.theta  = theta;
     n_params = 2;           /* number of parameters for non-standard form */
+    /* FALLTHROUGH */
   default:
     break;
   }
@@ -261,8 +262,8 @@ _unur_set_params_cauchy( UNUR_DISTR *distr, const double *params, int n_params )
 
   /* set (standard) domain */
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;   /* left boundary  */
-    DISTR.domain[1] = INFINITY;    /* right boundary */
+    DISTR.domain[0] = -UNUR_INFINITY;   /* left boundary  */
+    DISTR.domain[1] = UNUR_INFINITY;    /* right boundary */
   }
 
   return UNUR_SUCCESS;

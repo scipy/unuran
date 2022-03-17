@@ -108,11 +108,7 @@ Copyright 1984, 1987, 1989, 1995 by Stephen L. Moshier
 /*---------------------------------------------------------------------------*/
 /* Include constants used in UNU.RAN.                                        */
 
-#include <float.h>
-#include <math.h>
-#include <utils/unur_math_source.h>
-#include <utils/unur_fp_source.h>
-#include <utils/unur_fp_const_source.h>
+#include <unur_source.h>
 
 /*---------------------------------------------------------------------------*/
 /* Define mathematical constants (see x_math_source.h).                      */

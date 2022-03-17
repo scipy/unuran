@@ -70,7 +70,7 @@
 /*---------------------------------------------------------------------------*/
 /* Constants                                                                 */
 
-/* abort sampling after this number of iterations and return INFINITY */
+/* abort sampling after this number of iterations and return UNUR_INFINITY */
 #define HRB_EMERGENCY_BREAK  (100000)
 
 /*---------------------------------------------------------------------------*/
@@ -221,7 +221,7 @@ unur_hrb_new( const struct unur_distr *distr )
   par->distr   = distr;           /* pointer to distribution object          */
 
   /* set default values */
-  PAR->upper_bound = INFINITY;    /* upper bound for hazard rate (not set yet) */
+  PAR->upper_bound = UNUR_INFINITY; /* upper bound for hazard rate (not set yet) */
 
   par->method   = UNUR_METH_HRB;  /* method                                  */
   par->variant  = 0u;             /* default variant                         */
@@ -506,8 +506,8 @@ _unur_hrb_check_par( struct unur_gen *gen )
   }
 
   /* set left border and check domain */
-  if (DISTR.domain[0] < 0.)       DISTR.domain[0] = 0.;
-  if (DISTR.domain[1] < INFINITY) DISTR.domain[1] = INFINITY;
+  if (DISTR.domain[0] < 0.)            DISTR.domain[0] = 0.;
+  if (DISTR.domain[1] < UNUR_INFINITY) DISTR.domain[1] = UNUR_INFINITY;
   GEN->left_border = DISTR.domain[0];
 
   return UNUR_SUCCESS;
@@ -588,7 +588,7 @@ _unur_hrb_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,E,X;
@@ -596,7 +596,7 @@ _unur_hrb_sample( struct unur_gen *gen )
   int i;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRB_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRB_GEN,UNUR_INFINITY);
 
   /* parameter for majorizing hazard rate */
   lambda = GEN->upper_bound;
@@ -645,7 +645,7 @@ _unur_hrb_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,E,X,hrx;
@@ -653,7 +653,7 @@ _unur_hrb_sample_check( struct unur_gen *gen )
   int i;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRB_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRB_GEN,UNUR_INFINITY);
 
   /* parameter for majorizing hazard rate */
   lambda = GEN->upper_bound;
