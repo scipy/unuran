@@ -4,54 +4,38 @@
  *
  * Replacement for missing C99 function hypot()
  *
- * Copied and renamed from gsl_hypot into _unur_hypot
+ * Copied and renamed from NumPy's npy_hypot into _unur_hypot
  * by Josef Leydold, Tue Nov  1 11:17:37 CET 2011
- */
-
-/* sys/hypot.c
- * 
- * Copyright (C) 1996, 1997, 1998, 1999, 2000, 2007 Gerard Jungman, Brian Gough, Patrick Alken
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <unur_source.h>
 
+/* Copied from NumPy: https://github.com/numpy/numpy/blob/43c113dd7aa36ef833315035858ea98a7b4732c5/numpy/core/src/common/npy_config.h#L73 */
+#if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(_WIN64)
+#ifdef HAVE_DECL_HYPOT
+#undef HAVE_DECL_HYPOT
+#endif
+#endif
+
+/* Copied from NumPy's npy_hypot: https://github.com/numpy/numpy/blob/663094532de48e131793faaa0ba06eb7c051ab47/numpy/core/src/npymath/npy_math_internal.h.src#L191-L219 */
 #if !HAVE_DECL_HYPOT
-double _unur_hypot (const double x, const double y)
+double _unur_hypot(double x, double y)
 {
-  double xabs = fabs(x) ;
-  double yabs = fabs(y) ;
-  double min, max;
+    double yx;
 
-  if (xabs < yabs) {
-    min = xabs ;
-    max = yabs ;
-  } else {
-    min = yabs ;
-    max = xabs ;
-  }
-
-  if (min == 0) 
-    {
-      return max ;
+    x = fabs(x);
+    y = fabs(y);
+    if (x < y) {
+        double temp = x;
+        x = y;
+        y = temp;
     }
-
-  {
-    double u = min / max ;
-    return max * sqrt (1 + u * u) ;
-  }
+    if (x == 0.) {
+        return 0.;
+    }
+    else {
+        yx = y/x;
+        return x*sqrt(1.+yx*yx);
+    }
 } /* end of _unur_hypot() */
 #endif
