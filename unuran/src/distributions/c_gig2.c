@@ -47,7 +47,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2000-2010 Wolfgang Hoermann and Josef Leydold             *
+ *   Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold             *
  *   Department of Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -72,7 +72,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -130,7 +129,7 @@ _unur_logpdf_gig2(double x, const UNUR_DISTR *distr)
 
   if (x <= 0.)
     /* out of support */
-    return -INFINITY;
+    return -UNUR_INFINITY;
 
   return ( (theta-1.) * log(x) - 0.5 * (chi/x + psi*x) + log(NORMCONSTANT) );
 
@@ -294,8 +293,8 @@ _unur_set_params_gig2( UNUR_DISTR *distr, const double *params, int n_params )
 
   /* set (standard) domain */
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = 0.;          /* left boundary  */
-    DISTR.domain[1] = INFINITY;    /* right boundary */
+    DISTR.domain[0] = 0.;             /* left boundary  */
+    DISTR.domain[1] = UNUR_INFINITY;  /* right boundary */
   }
 
   return UNUR_SUCCESS;
@@ -342,7 +341,7 @@ unur_distr_gig2( const double *params, int n_params )
   }
 
   /* normalization constant */
-  NORMCONSTANT = _unur_normconstant_gig2(params,n_params);
+  NORMCONSTANT = _unur_normconstant_gig2(DISTR.params,DISTR.n_params);
 
   /* mode and area below p.d.f. */
   _unur_upd_mode_gig2(distr);

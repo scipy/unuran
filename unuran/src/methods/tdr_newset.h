@@ -459,13 +459,13 @@ unur_tdr_get_sqhratio( const struct unur_gen *gen )
      /*   gen  ... pointer to generator object                               */
      /*                                                                      */
      /* return:                                                              */
-     /*   ratio    ... on success                                            */
-     /*   INFINITY ... on error                                              */
+     /*   ratio         ... on success                                       */
+     /*   UNUR_INFINITY ... on error                                         */
      /*----------------------------------------------------------------------*/
 {
   /* check input */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, TDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, TDR, UNUR_INFINITY );
 
   return (GEN->Asqueeze / GEN->Atotal);
 
@@ -482,13 +482,13 @@ unur_tdr_get_hatarea( const struct unur_gen *gen )
      /*   gen  ... pointer to generator object                               */
      /*                                                                      */
      /* return:                                                              */
-     /*   area     ... on success                                            */
-     /*   INFINITY ... on error                                              */
+     /*   area          ... on success                                       */
+     /*   UNUR_INFINITY ... on error                                         */
      /*----------------------------------------------------------------------*/
 {
   /* check input */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, TDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, TDR, UNUR_INFINITY );
 
   return GEN->Atotal;
 
@@ -505,13 +505,13 @@ unur_tdr_get_squeezearea( const struct unur_gen *gen )
      /*   gen  ... pointer to generator object                               */
      /*                                                                      */
      /* return:                                                              */
-     /*   area     ... on success                                            */
-     /*   INFINITY ... on error                                              */
+     /*   area          ... on success                                       */
+     /*   UNUR_INFINITY ... on error                                         */
      /*----------------------------------------------------------------------*/
 {
   /* check input */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, TDR, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, TDR, UNUR_INFINITY );
 
   return GEN->Asqueeze;
 
@@ -976,7 +976,7 @@ unur_tdr_chg_truncated( struct unur_gen *gen, double left, double right )
      /*   error code   ... on error                                          */
      /*                                                                      */
      /* comment:                                                             */
-     /*   the new boundary points may be +/- INFINITY                        */
+     /*   the new boundary points may be +/- UNUR_INFINITY                   */
      /*----------------------------------------------------------------------*/
 {
   double Umin, Umax;
@@ -1068,7 +1068,7 @@ _unur_tdr_eval_cdfhat( struct unur_gen *gen, double x )
      /*                                                                      */
      /* return:                                                              */
      /*   CDF of hat(x) or                                                   */
-     /*   INFINITY in case of error                                          */
+     /*   UNUR_INFINITY in case of error                                     */
      /*                                                                      */
      /* Important:                                                           */
      /*   If gen is a generator object for variant IA (immediate acceptance) */
@@ -1082,7 +1082,7 @@ _unur_tdr_eval_cdfhat( struct unur_gen *gen, double x )
   double cdf;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
 
   /* the easy case: left and right boundary of domain */
   if (x <= DISTR.domain[0]) return 0.;
@@ -1095,7 +1095,7 @@ _unur_tdr_eval_cdfhat( struct unur_gen *gen, double x )
 
     /* find interval (sequential search) */
     for (iv = GEN->iv; iv->next!=NULL; iv=iv->next) {
-      COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+      COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
       /* iv->x is left construction point of interval */
       if (x < iv->next->x) break;
     }
@@ -1142,7 +1142,7 @@ _unur_tdr_eval_cdfhat( struct unur_gen *gen, double x )
 
     /* find interval (sequential search) */
     for (iv = GEN->iv; iv->next!=NULL; iv=iv->next) {
-      COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+      COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
       if (x <= iv->next->ip) break;
     }
     if (iv->next == NULL)
@@ -1168,7 +1168,7 @@ _unur_tdr_eval_cdfhat( struct unur_gen *gen, double x )
     
   default:
     _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
 } /* end of _unur_tdr_eval_cdfhat() */

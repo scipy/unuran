@@ -120,6 +120,7 @@ double _unur_stdgen_sample_beta_bc( UNUR_GEN *generator );
 double _unur_stdgen_sample_beta_b00( UNUR_GEN *generator );
 double _unur_stdgen_sample_beta_b01( UNUR_GEN *generator );
 double _unur_stdgen_sample_beta_b1prs( UNUR_GEN *generator );
+double _unur_stdgen_sample_beta_binv( UNUR_GEN *generator );
 
 
 /*---------------------------------------------------------------------------*/
@@ -197,6 +198,10 @@ double _unur_stdgen_sample_gamma_gd( UNUR_GEN *generator );
 
 
 /*---------------------------------------------------------------------------*/
+/* Generalized hyperbolic distribution                                       */
+
+
+/*---------------------------------------------------------------------------*/
 /* Generalized inverse Gaussian distribution  [2; ch.15, p.284]              */
 
 /* initialize special generator                                              */
@@ -236,6 +241,10 @@ int _unur_stdgen_lomax_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 
 
 /*---------------------------------------------------------------------------*/
+/* Meixner distribution                                                      */
+
+
+/*---------------------------------------------------------------------------*/
 /*  Normal distribution  [2; ch.13, p.80]                                    */
 
 /* initialize special generator                                              */
@@ -264,6 +273,7 @@ double _unur_stdgen_sample_normal_acr( UNUR_GEN *generator );
 
 /* infamous sum-of-12-uniforms method. NEVER use it!!                        */
 double _unur_stdgen_sample_normal_sum( UNUR_GEN *generator );
+
 
 /*---------------------------------------------------------------------------*/
 /* Pareto distribution (of first kind)  [2; ch.20, p.574]                   */
@@ -338,6 +348,9 @@ int _unur_stdgen_triangular_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 /* initialize special generator                                              */
 int _unur_stdgen_uniform_init( UNUR_PAR *parameters, UNUR_GEN *generator );
 
+
+/*---------------------------------------------------------------------------*/
+/* Variance Gamma distribution                                               */
 
 /*---------------------------------------------------------------------------*/
 /* Weibull distribution  [2; ch.21, p.628]                                   */

@@ -736,13 +736,13 @@ _unur_nrou_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,X;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_NROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_NROU_GEN,UNUR_INFINITY);
 
   while (1) {
     /* generate point uniformly on rectangle */
@@ -789,13 +789,13 @@ _unur_nrou_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,X,fx,sfx,xfx;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_NROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_NROU_GEN,UNUR_INFINITY);
 
   while (1) {
     /* generate point uniformly on rectangle */

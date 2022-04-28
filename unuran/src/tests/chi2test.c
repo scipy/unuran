@@ -45,7 +45,6 @@
 #include <distr/discr.h>
 #include <distr/distr_source.h>
 #include <distributions/unur_distributions.h>
-#include <specfunct/unur_specfunct_source.h>
 #include <utils/matrix_source.h>
 #include "unuran_tests.h"
 
@@ -337,12 +336,12 @@ _unur_test_chi2_cont( struct unur_gen *gen,
 
   /* compute Fl and Fr */
   if (gen->distr->set & UNUR_DISTR_SET_TRUNCATED) {
-    Fl = (DISTR.trunc[0] <= -INFINITY) ? 0. : cdf(DISTR.trunc[0], gen->distr);
-    Fr = (DISTR.trunc[1] >=  INFINITY) ? 1. : cdf(DISTR.trunc[1], gen->distr);
+    Fl = (DISTR.trunc[0] <= -UNUR_INFINITY) ? 0. : cdf(DISTR.trunc[0], gen->distr);
+    Fr = (DISTR.trunc[1] >=  UNUR_INFINITY) ? 1. : cdf(DISTR.trunc[1], gen->distr);
   }
   else {
-    Fl = (DISTR.domain[0] <= -INFINITY) ? 0. : cdf(DISTR.domain[0], gen->distr);
-    Fr = (DISTR.domain[1] >=  INFINITY) ? 1. : cdf(DISTR.domain[1], gen->distr);
+    Fl = (DISTR.domain[0] <= -UNUR_INFINITY) ? 0. : cdf(DISTR.domain[0], gen->distr);
+    Fr = (DISTR.domain[1] >=  UNUR_INFINITY) ? 1. : cdf(DISTR.domain[1], gen->distr);
   }
   Fdelta = Fr - Fl;
 

@@ -390,7 +390,7 @@ unur_distr_discr_make_pv( struct unur_distr *distr )
     cdf = 0.;       /* cumulated sum of PV                   */
     cdf_old = 0.;   /* cumulated sum of PV in last iteration */
     /* threshold for truncating PV */
-    thresh_cdf = (distr->set & UNUR_DISTR_SET_PMFSUM) ? (1.-1.e-8)*DISTR.sum : INFINITY;
+    thresh_cdf = (distr->set & UNUR_DISTR_SET_PMFSUM) ? (1.-1.e-8)*DISTR.sum : UNUR_INFINITY;
 
     /* compute PV */
     for (n_alloc = size_alloc; n_alloc <= max_alloc; n_alloc += size_alloc) {
@@ -485,8 +485,8 @@ unur_distr_discr_eval_pv( int k, const struct unur_distr *distr )
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
 
   if (DISTR.pv != NULL) {
     /* use probability vector */
@@ -509,7 +509,7 @@ unur_distr_discr_eval_pv( int k, const struct unur_distr *distr )
 
   /* else: data missing */
   _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-  return INFINITY;
+  return UNUR_INFINITY;
 
 } /* end of unur_distr_discr_eval_pv() */
 
@@ -713,12 +713,12 @@ unur_distr_discr_eval_pmf( int k, const struct unur_distr *distr )
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
 
   if (DISTR.pmf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
   return _unur_discr_PMF(k,distr);
@@ -740,12 +740,12 @@ unur_distr_discr_eval_cdf( int k, const struct unur_distr *distr )
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
 
   if (DISTR.cdf == NULL) {
     _unur_error(distr->name,UNUR_ERR_DISTR_DATA,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
   return _unur_discr_CDF(k,distr);
@@ -897,8 +897,8 @@ _unur_distr_discr_eval_pmf_tree( int k, const struct unur_distr *distr )
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
 
   return ((DISTR.pmftree) ? _unur_fstr_eval_tree(DISTR.pmftree,(double)k) : 0.);
 } /* end of _unur_distr_discr_eval_pmf_tree() */
@@ -919,8 +919,8 @@ _unur_distr_discr_eval_cdf_tree( int k, const struct unur_distr *distr )
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
 
   return ((DISTR.cdftree) ? _unur_fstr_eval_tree(DISTR.cdftree,(double)k) : 0.);
 } /* end of _unur_distr_discr_eval_cdf_tree() */
@@ -1128,7 +1128,7 @@ unur_distr_discr_get_domain( const struct unur_distr *distr, int *left, int *rig
      /*   if no boundaries have been set [INT_MIN, INT_MAX] is returned.     */
      /*----------------------------------------------------------------------*/
 {
-  /* in case of error the boundaries are set to +/- INFINITY */
+  /* in case of error the boundaries are set to +/- UNUR_INFINITY */
   *left = INT_MIN;
   *right = INT_MAX;
 
@@ -1370,15 +1370,15 @@ unur_distr_discr_get_pmfsum( struct unur_distr *distr )
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
-  _unur_check_NULL( NULL, distr, INFINITY );
-  _unur_check_distr_object( distr, DISCR, INFINITY );
+  _unur_check_NULL( NULL, distr, UNUR_INFINITY );
+  _unur_check_distr_object( distr, DISCR, UNUR_INFINITY );
 
   /* sum known ? */
   if ( !(distr->set & UNUR_DISTR_SET_PMFSUM) ) {
     /* try to compute sum */
     if ( unur_distr_discr_upd_pmfsum(distr) != UNUR_SUCCESS ) {
       _unur_error(distr->name,UNUR_ERR_DISTR_GET,"sum");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
   }
 

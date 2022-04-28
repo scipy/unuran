@@ -68,6 +68,7 @@ enum {
   UNUR_DISTR_LOGISTIC         = 0x00000d01u,  /*    X     X     X     X     X     .      */
   UNUR_DISTR_LOGNORMAL        = 0x00000e01u,  /*    X     X     .     X     .     .      */
   UNUR_DISTR_LOMAX            = 0x00000f01u,  /*    X     X     X     X     .     .      */
+  UNUR_DISTR_MEIXNER          = 0x00002601u,  /*    X     .     .     X     .     .      */
   UNUR_DISTR_NORMAL           = 0x00001001u,  /*    X     X     X     X     X     .      */
    UNUR_DISTR_GAUSSIAN        = 0x00001001u,  /*    same as NORMAL                       */
   UNUR_DISTR_PARETO           = 0x00001101u,  /*    X     X     X     X     .     .      */
@@ -78,6 +79,7 @@ enum {
   UNUR_DISTR_TRIANGULAR       = 0x00001601u,  /*    X     X     X     X     X     .      */
   UNUR_DISTR_UNIFORM          = 0x00002001u,  /*    X     X     X     X     .     .      */
    UNUR_DISTR_BOXCAR          = 0x00002001u,  /*    same as UNIFORM                      */
+  UNUR_DISTR_VG               = 0x00002501u,  /*    X     .     .     .     .     .      */
   UNUR_DISTR_WEIBULL          = 0x00001801u,  /*    X     X     X     X     X     .      */
 
   UNUR_DISTR_BURR_I           = 0x0000b001u,  /*    .     X     .     .     X     .      */

@@ -792,13 +792,13 @@ unur_ars_get_loghatarea( const struct unur_gen *gen )
      /*   gen  ... pointer to generator object                               */
      /*                                                                      */
      /* return:                                                              */
-     /*   area     ... on success                                            */
-     /*   INFINITY ... on error                                              */
+     /*   area          ... on success                                       */
+     /*   UNUR_INFINITY ... on error                                         */
      /*----------------------------------------------------------------------*/
 {
   /* check input */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, ARS, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, ARS, UNUR_INFINITY );
 
   return log(GEN->Atotal) + GEN->logAmax;
 
@@ -1220,7 +1220,7 @@ _unur_ars_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*                                                                      */
      /*======================================================================*/
      /* comment:                                                             */
@@ -1258,11 +1258,11 @@ _unur_ars_sample( struct unur_gen *gen )
   int n_trials;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_ARS_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_ARS_GEN,UNUR_INFINITY);
 
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
 
   for (n_trials=0; n_trials<GEN->max_iter; ++n_trials) {
@@ -1370,7 +1370,7 @@ _unur_ars_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   struct unur_ars_interval *iv, *cp;
@@ -1381,11 +1381,11 @@ _unur_ars_sample_check( struct unur_gen *gen )
   int n_trials;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_ARS_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_ARS_GEN,UNUR_INFINITY);
 
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
 
   for (n_trials=0; n_trials<GEN->max_iter; ++n_trials) {
@@ -1511,12 +1511,12 @@ unur_ars_eval_invcdfhat( const struct unur_gen *gen, double U )
 
 
   /* check arguments */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_ARS ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY; 
+    return UNUR_INFINITY; 
   }
-  COOKIE_CHECK(gen,CK_ARS_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_ARS_GEN,UNUR_INFINITY);
 
   if ( U<0. || U>1.) {
     _unur_warning(gen->genid,UNUR_ERR_DOMAIN,"argument u not in [0,1]");
@@ -1524,7 +1524,7 @@ unur_ars_eval_invcdfhat( const struct unur_gen *gen, double U )
 
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
 
   /* validate argument */
@@ -1607,7 +1607,7 @@ _unur_ars_improve_hat( struct unur_gen *gen, struct unur_ars_interval *iv,
     /* condition for PDF is violated! */
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"");
     if (gen->variant & ARS_VARFLAG_PEDANTIC) {
-      /* replace sampling routine by dummy routine that just returns INFINITY */
+      /* replace sampling routine by dummy routine that just returns UNUR_INFINITY */
       SAMPLE = _unur_sample_cont_error;
       return UNUR_ERR_GEN_CONDITION;
     }
@@ -1666,7 +1666,7 @@ _unur_ars_starting_cpoints( struct unur_gen *gen )
   x = DISTR.BD_LEFT;
   is_increasing = TRUE;
     
-  logfx = logfx_last = _unur_isfinite(x) ? logPDF(x) : -INFINITY;
+  logfx = logfx_last = _unur_isfinite(x) ? logPDF(x) : -UNUR_INFINITY;
   iv = GEN->iv = _unur_ars_interval_new( gen, x, logfx );
   if (iv == NULL) return UNUR_ERR_GEN_DATA;  /* logPDF(x) overflow */
 
@@ -1700,7 +1700,7 @@ _unur_ars_starting_cpoints( struct unur_gen *gen )
 	check if a point is too close to mode ??  */
 
     /* value of PDF at starting point */
-    logfx = _unur_isfinite(x) ? logPDF(x) : -INFINITY;
+    logfx = _unur_isfinite(x) ? logPDF(x) : -UNUR_INFINITY;
 
     /* check value of PDF at starting point */
     if (!is_increasing && logfx > logfx_last * (1.+DBL_EPSILON)) {
@@ -1722,7 +1722,7 @@ _unur_ars_starting_cpoints( struct unur_gen *gen )
 	}
       }
       else
-	/* there should be no more points with logPDF(x) > -INFINITY */
+	/* there should be no more points with logPDF(x) > -UNUR_INFINITY */
 	break;
     }
     
@@ -1744,9 +1744,9 @@ _unur_ars_starting_cpoints( struct unur_gen *gen )
 
   /* we have left the loop with the right boundary of the support of PDF
      make shure that we will never use iv for sampling. */
-  iv->logAhat = -INFINITY;
+  iv->logAhat = -UNUR_INFINITY;
   iv->Ahatr_fract = iv->sq = 0.;
-  iv->Acum = INFINITY;
+  iv->Acum = UNUR_INFINITY;
 #ifdef DEBUG_STORE_IP 
   iv->ip = iv->x;
 #endif
@@ -1806,9 +1806,9 @@ _unur_ars_starting_intervals( struct unur_gen *gen )
       if (iv->next==NULL) {
 	/* last (virtuel) interval in list.
 	   make sure that we will never use this segment */
-	iv->logAhat = -INFINITY;
+	iv->logAhat = -UNUR_INFINITY;
 	iv->Ahatr_fract = iv->sq = 0.;
-	iv->Acum = INFINITY;
+	iv->Acum = UNUR_INFINITY;
       }
       continue;
     default:     /* PDF not T-concave */
@@ -1898,7 +1898,7 @@ _unur_ars_interval_new( struct unur_gen *gen, double x, double logfx )
   CHECK_NULL(gen,NULL);  COOKIE_CHECK(gen,CK_ARS_GEN,NULL);
 
   /* first check logfx */
-  if (!(logfx < INFINITY)) {
+  if (!(logfx < UNUR_INFINITY)) {
     /* overflow */
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"logPDF(x) overflow");
     return NULL;
@@ -1911,7 +1911,7 @@ _unur_ars_interval_new( struct unur_gen *gen, double x, double logfx )
   COOKIE_SET(iv,CK_ARS_IV);
 
   /* avoid uninitialized variables */
-  iv->logAhat = -INFINITY;
+  iv->logAhat = -UNUR_INFINITY;
   iv->Acum = iv->Ahatr_fract = 0.;
   iv->sq = 0.;
 #ifdef DEBUG_STORE_IP 
@@ -1923,11 +1923,11 @@ _unur_ars_interval_new( struct unur_gen *gen, double x, double logfx )
   iv->logfx = logfx;      /* value of logPDF at x */
 
   /* derivative of transformed density */
-  iv->dlogfx = _unur_isfinite(logfx) ? dlogPDF(x) : INFINITY;
+  iv->dlogfx = _unur_isfinite(logfx) ? dlogPDF(x) : UNUR_INFINITY;
   
-  /* the program requires dlogPDF > -INFINITY */
-  if ( !(iv->dlogfx > -INFINITY))
-    iv->dlogfx = INFINITY;
+  /* the program requires dlogPDF > -UNUR_INFINITY */
+  if ( !(iv->dlogfx > -UNUR_INFINITY))
+    iv->dlogfx = UNUR_INFINITY;
 
   return iv;
 
@@ -1948,7 +1948,7 @@ _unur_ars_interval_parameter( struct unur_gen *gen, struct unur_ars_interval *iv
      /* return:                                                              */
      /*   UNUR_SUCCESS    ... if successful                                  */
      /*   UNUR_ERR_SILENT ... do not add this construction point             */
-     /*   UNUR_ERR_INF    ... area = INFINITY                                */
+     /*   UNUR_ERR_INF    ... area = UNUR_INFINITY                           */
      /*   others          ... error (PDF not T-concave)                      */
      /*----------------------------------------------------------------------*/
 {
@@ -1991,7 +1991,7 @@ _unur_ars_interval_parameter( struct unur_gen *gen, struct unur_ars_interval *iv
        the following accepts PDFs with might be a little bit not T_concave */
     if ( ( (iv->sq > iv->dlogfx      && (!_unur_FP_approx(iv->sq,iv->dlogfx)) ) ||
 	   (iv->sq < iv->next->dlogfx && (!_unur_FP_approx(iv->sq,iv->next->dlogfx)) ) )
-	 && iv->next->dlogfx < INFINITY ) {   
+	 && iv->next->dlogfx < UNUR_INFINITY ) {   
 
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"Squeeze too steep/flat. PDF not T-concave!");
       return UNUR_ERR_GEN_CONDITION;
@@ -1999,7 +1999,7 @@ _unur_ars_interval_parameter( struct unur_gen *gen, struct unur_ars_interval *iv
   }
 
   else {  /* no squeeze */
-    iv->sq = -INFINITY;
+    iv->sq = -UNUR_INFINITY;
   }
 
   /* volume below hat */
@@ -2007,7 +2007,7 @@ _unur_ars_interval_parameter( struct unur_gen *gen, struct unur_ars_interval *iv
   logAhatr = _unur_ars_interval_logarea( gen, iv->next, iv->next->dlogfx, ip);
 
   /* areas below head unbounded ? */
-  if (! (logAhatl < INFINITY && logAhatr < INFINITY) )
+  if (! (logAhatl < UNUR_INFINITY && logAhatr < UNUR_INFINITY) )
     return UNUR_ERR_INF;
 
   /* total area */
@@ -2182,7 +2182,7 @@ _unur_ars_tangent_intersection_point( struct unur_gen *gen, struct unur_ars_inte
 
   /*
      case: there is no tangent at one of the boundary points of the interval
-           (then the slope is INFINITY)
+           (then the slope is UNUR_INFINITY)
      or
      case: the tangents are too steep  (--> case (3))
   */
@@ -2204,12 +2204,12 @@ _unur_ars_tangent_intersection_point( struct unur_gen *gen, struct unur_ars_inte
        thus we ignore this case. */
     if ( fabs(iv->dlogfx) < DBL_EPSILON * fabs(iv->next->dlogfx) ) {
       *ipt = iv->x;        /* intersection point = left boundary of interval */
-      iv->dlogfx = INFINITY;
+      iv->dlogfx = UNUR_INFINITY;
       return UNUR_SUCCESS;
     }
     else if ( fabs(iv->next->dlogfx) < DBL_EPSILON * fabs(iv->dlogfx) ) {
       *ipt = iv->next->x;   /* intersection point = right boundary of interval */
-      iv->next->dlogfx = INFINITY;
+      iv->next->dlogfx = UNUR_INFINITY;
       return UNUR_SUCCESS;
     }
     else {
@@ -2273,7 +2273,7 @@ _unur_ars_interval_logarea( struct unur_gen *gen ATTRIBUTE__UNUSED,
      /*   log of area                                                             */
      /*                                                                           */
      /* error:                                                                    */
-     /*   return INFINITY                                                         */
+     /*   return UNUR_INFINITY                                                    */
      /*                                                                           */
      /* comment:                                                                  */
      /*   x0    ... construction point of tangent (= iv->x)                       */
@@ -2289,22 +2289,22 @@ _unur_ars_interval_logarea( struct unur_gen *gen ATTRIBUTE__UNUSED,
   double t, logt;
 
   /* check arguments */
-  CHECK_NULL(iv,INFINITY);   COOKIE_CHECK(iv,CK_ARS_IV,INFINITY); 
+  CHECK_NULL(iv,UNUR_INFINITY);   COOKIE_CHECK(iv,CK_ARS_IV,UNUR_INFINITY); 
 
   /* length of interval > 0 ? */
   if (_unur_FP_same(x, iv->x))
-    return -INFINITY;
+    return -UNUR_INFINITY;
 
   /* if the construction point is at infinity, we cannot compute an area.
-     (in this case we should have x == iv->x == INFINITY). */
+     (in this case we should have x == iv->x == UNUR_INFINITY). */
   if (!_unur_isfinite(iv->x)) 
-    return INFINITY;
+    return UNUR_INFINITY;
 
   /* unbounded? */
   if ( !_unur_isfinite(slope)    ||
        (_unur_FP_is_minus_infinity(x) && slope<=0.) ||
-       (_unur_FP_is_infinity(x)       && slope>=0.)  )   /* we have set (Tf)'(x) = INFINITY, if f(x)=0 */
-    return INFINITY;
+       (_unur_FP_is_infinity(x)       && slope>=0.)  ) /* we have set (Tf)'(x) = UNUR_INFINITY, if f(x)=0 */
+    return UNUR_INFINITY;
 
   /* construction point x0 of tangent and log of PDF at x0 */
   x0 = iv->x;
@@ -2315,7 +2315,7 @@ _unur_ars_interval_logarea( struct unur_gen *gen ATTRIBUTE__UNUSED,
 
   /* case: hat/squeeze constant --> area = f(x0) * |x - x0| */
   if (_unur_iszero(slope))
-    return (_unur_isfinite(x) ? logfx0 + logxdiff : INFINITY);
+    return (_unur_isfinite(x) ? logfx0 + logxdiff : UNUR_INFINITY);
 
   /* case: domain unbounded --> area = f(x0) / |slope| */
   if (!_unur_isfinite(x))
@@ -2360,7 +2360,7 @@ _unur_ars_make_area_table( struct unur_gen *gen )
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_ARS_GEN,UNUR_ERR_COOKIE);
 
   /* first we need the maximum area in intervals as scaling factor */
-  GEN->logAmax = -INFINITY;
+  GEN->logAmax = -UNUR_INFINITY;
   for (iv = GEN->iv; iv != NULL; iv = iv->next ) {
     COOKIE_CHECK(iv,CK_ARS_IV,UNUR_ERR_COOKIE);
     if (GEN->logAmax < iv->logAhat)
@@ -2831,7 +2831,7 @@ _unur_ars_info( struct unur_gen *gen, int help )
   _unur_string_append(info,"\n");
       
   /* method */
-  _unur_string_append(info,"method: ARS (Transformed Density Rejection -- Gilks&Wild variant)\n");
+  _unur_string_append(info,"method: ARS (Adaptive Rejection Sampling)\n");
   _unur_string_append(info,"   T_c(x) = log(x)  ... c = 0\n");
   _unur_string_append(info,"\n");
 

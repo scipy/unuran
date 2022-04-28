@@ -71,21 +71,9 @@
 #include <math.h>
 
 #ifndef INFINITY
-#  ifdef HUGE_VAL
-#    define INFINITY  (HUGE_VAL)
-#  else
-
 /* use a global variable to store infinity */
 /* (definition in umath.c)                 */
 extern const double INFINITY;
-
-/* #    error */
-/* #    error +--------------------------------------------+ */
-/* #    error ! Sorry, Cannot define INFINITY correctly!   ! */
-/* #    error ! Please contact <unuran@statmath.wu.ac.at>. ! */
-/* #    error +--------------------------------------------+ */
-/* #    error */
-#  endif
 #endif
 
 #define UNUR_INFINITY  (INFINITY)

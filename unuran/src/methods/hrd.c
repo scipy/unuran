@@ -451,8 +451,8 @@ _unur_hrd_check_par( struct unur_gen *gen )
      /*----------------------------------------------------------------------*/
 {
   /* set left border and check domain */
-  if (DISTR.domain[0] < 0.)       DISTR.domain[0] = 0.;
-  if (DISTR.domain[1] < INFINITY) DISTR.domain[1] = INFINITY;
+  if (DISTR.domain[0] < 0.)            DISTR.domain[0] = 0.;
+  if (DISTR.domain[1] < UNUR_INFINITY) DISTR.domain[1] = UNUR_INFINITY;
   GEN->left_border = DISTR.domain[0];
 
   /* compute upper bound for hazard rate (at left border) */
@@ -540,14 +540,14 @@ _unur_hrd_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,E,X,hrx;
   double lambda;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRD_GEN,UNUR_INFINITY);
 
   /* parameter for majorizing hazard rate */
   lambda = GEN->upper_bound;
@@ -584,7 +584,7 @@ _unur_hrd_sample( struct unur_gen *gen )
     else {
       /* the given function is not a hazard rate */
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"HR not valid");
-      return INFINITY;
+      return UNUR_INFINITY;
     } 
   }
 
@@ -604,7 +604,7 @@ _unur_hrd_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,E,X,hrx;
@@ -612,7 +612,7 @@ _unur_hrd_sample_check( struct unur_gen *gen )
   int i;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRD_GEN,UNUR_INFINITY);
 
   /* parameter for majorizing hazard rate */
   lambda = GEN->upper_bound;
@@ -659,7 +659,7 @@ _unur_hrd_sample_check( struct unur_gen *gen )
     else {
       /* the given function is not a hazard rate */
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"HR not valid");
-      return INFINITY;
+      return UNUR_INFINITY;
     } 
   }
 

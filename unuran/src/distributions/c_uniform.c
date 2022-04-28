@@ -52,7 +52,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -102,7 +101,7 @@ _unur_logpdf_uniform( double x, const UNUR_DISTR *distr )
   register const double *params = DISTR.params;
 
   if (x < a || x > b)
-    return -INFINITY;
+    return -UNUR_INFINITY;
   /* else */
   return -log(b-a);
 

@@ -1,5 +1,8 @@
 /* Wed Jan  3, Josef Leydold:
    Remark: the global (extern) variable sgngam has been removed
+   
+   Mon Apr  2 20:41:14 CEST 2012, Josef Leydold:
+   Replaced INFINITY by UNUR_INFINITY
 */
 
 /*							gamma.c
@@ -114,9 +117,9 @@ Copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
 */
 
 #include "cephes_source.h"
-#include <utils/unur_fp_source.h>
-#include <utils/umath.h>
 
+/*---------------------------------------------------------------------------*/
+#ifdef COMPILE_CEPHES
 /*---------------------------------------------------------------------------*/
 
 static double P[] = {
@@ -203,7 +206,7 @@ if( q > 33.0 )
 		p = floor(q);
 		if( _unur_FP_same(p,q) )
 			{
-			return( sgngam * INFINITY);
+			return( sgngam * UNUR_INFINITY);
 			}
 		i = (int) p;
 		if( (i & 1) == 0 )
@@ -217,7 +220,7 @@ if( q > 33.0 )
 		z = q * sin( PI * z );
 		if( _unur_iszero(z) )
 			{
-			return( sgngam * INFINITY);
+			return( sgngam * UNUR_INFINITY);
 			}
 		z = fabs(z);
 		z = PI/(z * stirf(q) );
@@ -262,7 +265,7 @@ return( z * p / q );
 
 small:
 if( _unur_iszero(x) )
-	return( INFINITY );
+	return( UNUR_INFINITY );
 else
 	return( z/((1.0 + 0.5772156649015329 * x) * x) );
 }
@@ -315,7 +318,7 @@ int i;
 int sgngam = 1;
 
 if (!_unur_isfinite(x))
-	return(INFINITY);
+	return(UNUR_INFINITY);
 
 if( x < -34.0 )
 	{
@@ -323,7 +326,7 @@ if( x < -34.0 )
 	w = _unur_cephes_lgam(q); 
 	p = floor(q);
 	if( _unur_FP_same(p,q) )
-		return (INFINITY);
+		return (UNUR_INFINITY);
 	i = (int) p;
 	if( (i & 1) == 0 )
 		sgngam = -1;
@@ -337,7 +340,7 @@ if( x < -34.0 )
 		}
 	z = q * sin( PI * z );
 	if( _unur_iszero(z) )
-		return (INFINITY);
+		return (UNUR_INFINITY);
 /*	z = log(PI) - log( z ) - w;*/
 	z = LOGPI - log( z ) - w;
 	return( z );
@@ -357,7 +360,7 @@ if( x < 13.0 )
 	while( u < 2.0 )
 		{
 		if( _unur_iszero(u) )
-		       return (INFINITY);
+		       return (UNUR_INFINITY);
 		z /= u;
 		p += 1.0;
 		u = x + p;
@@ -378,7 +381,7 @@ if( x < 13.0 )
 	}
 
 if( x > MAXLGM )
-	return( sgngam * INFINITY );
+	return( sgngam * UNUR_INFINITY );
 
 q = ( x - 0.5 ) * log(x) - x + LS2PI;
 if( x > 1.0e8 )
@@ -394,4 +397,6 @@ else
 return( q );
 }
 
+/*---------------------------------------------------------------------------*/
+#endif  /* COMPILE_CEPHES */
 /*---------------------------------------------------------------------------*/

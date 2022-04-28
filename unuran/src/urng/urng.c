@@ -53,7 +53,7 @@ unur_urng_sample (UNUR_URNG *urng)
      /*   uniform random number                                              */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   /* check argument */
@@ -78,7 +78,7 @@ unur_sample_urng (UNUR_GEN *gen)
      /*   uniform random number                                              */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   struct unur_urng *urng = (gen) ? gen->urng : unur_get_default_urng(); 

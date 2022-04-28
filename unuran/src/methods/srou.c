@@ -959,13 +959,13 @@ _unur_srou_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,X,x,xx;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
 
   while (1) {
     /* generate point uniformly on rectangle */
@@ -1014,13 +1014,13 @@ _unur_srou_sample_mirror( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,V,X,x,fx,fnx,uu;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
 
   while (1) {
     /* generate point uniformly on rectangle */
@@ -1064,13 +1064,13 @@ _unur_srou_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,uu,V,X,x,nx,fx,sfx,fnx,xfx,xfnx,xx;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
 
   if (gen->variant & SROU_VARFLAG_MIRROR) {
     /* use mirror principle */
@@ -1188,13 +1188,13 @@ _unur_gsrou_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,Ur,V,W,X,Z;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
 
   while (1) {
     W = GEN->log_ab *_unur_call_urng(gen->urng);
@@ -1230,14 +1230,14 @@ _unur_gsrou_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,Ur,V,W,X,x,Z;
   double fx,uf,vf,vhl,vhr;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_SROU_GEN,UNUR_INFINITY);
 
   while (1) {
 

@@ -70,7 +70,7 @@
 /*---------------------------------------------------------------------------*/
 /* Constants                                                                 */
 
-/* abort sampling after this number of iterations and return INFINITY */
+/* abort sampling after this number of iterations and return UNUR_INFINITY */
 #define HRI_EMERGENCY_BREAK  (10000)
 
 /*---------------------------------------------------------------------------*/
@@ -503,8 +503,8 @@ _unur_hri_check_par( struct unur_gen *gen )
 {
 
   /* set left border and check domain */
-  if (DISTR.domain[0] < 0.)       DISTR.domain[0] = 0.;
-  if (DISTR.domain[1] < INFINITY) DISTR.domain[1] = INFINITY;
+  if (DISTR.domain[0] < 0.)            DISTR.domain[0] = 0.;
+  if (DISTR.domain[1] < UNUR_INFINITY) DISTR.domain[1] = UNUR_INFINITY;
   GEN->left_border = DISTR.domain[0];
 
   /* check design point */
@@ -604,7 +604,7 @@ _unur_hri_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U, V, E, X, hrx1;
@@ -613,7 +613,7 @@ _unur_hri_sample( struct unur_gen *gen )
   int i1 = 0;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRI_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRI_GEN,UNUR_INFINITY);
 
   /*
     -------------------
@@ -653,7 +653,7 @@ _unur_hri_sample( struct unur_gen *gen )
     if (i0>HRI_EMERGENCY_BREAK) {
       /* emergency break */
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
 
   }
@@ -708,7 +708,7 @@ _unur_hri_sample( struct unur_gen *gen )
     if (i1>HRI_EMERGENCY_BREAK) {
       /* emergency break */
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
   }
 
@@ -730,7 +730,7 @@ _unur_hri_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U, V, E, X, hrx, hrx1;
@@ -739,7 +739,7 @@ _unur_hri_sample_check( struct unur_gen *gen )
   int i1 = 0;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HRI_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HRI_GEN,UNUR_INFINITY);
 
   /*
     -------------------
@@ -785,7 +785,7 @@ _unur_hri_sample_check( struct unur_gen *gen )
     if (i0>HRI_EMERGENCY_BREAK) {
       /* emergency break */
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
 
   }
@@ -860,7 +860,7 @@ _unur_hri_sample_check( struct unur_gen *gen )
     if (i1>HRI_EMERGENCY_BREAK) {
       /* emergency break */
       _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"abort computation");
-      return INFINITY;
+      return UNUR_INFINITY;
     }
 
   }

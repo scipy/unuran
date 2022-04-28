@@ -4,30 +4,30 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   FILE:      c_rayleigh.c                                                 *
+ *   FILE:      c_meixner.c                                                  *
  *                                                                           *
  *   REFERENCES:                                                             *
  *                                                                           *
- *   [2] N.L. Johnson, S. Kotz and N. Balakrishnan                           *
- *       Continuous Univariate Distributions,                                *
- *       Volume 1, 2nd edition                                               *
- *       John Wiley & Sons, Inc., New York, 1994                             *
+ *****************************************************************************
+ *                                                                           *
+ *  distr: Meixner distribution                                              *
+ *                                                                           *
+ *  pdf:   f(x) = exp(beta*(x-mu)/alpha) * |Gamma(delta+ i*(x-mu)/alpha)|^2  *
+ *                                                                           *
+ *  domain:   infinity < x < infinity                                        *
+ *                                                                           *
+ *  constant: (2*cos(beta/2))^(2*delta) / (2*alpha*pi*Gamma(2*delta))        *
+ *                                                                           *
+ *  parameters: 4                                                            *
+ *     0 : alpha > 0 ... scale                                               *
+ *     1 : beta      ... shape (asymmetry) in [-pi,pi]                       *
+ *     2 : delta >0  ... shape                                               *
+ *     3 : mu        ... location                                            *
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *  distr: Rayleigh distribution [2; ch.18, p.456]                           *
- *                                                                           *
- *  pdf:       f(x) = x * exp( -1/2 * (x/sigma)^2 )                          *
- *  domain:    0 <= x < infinity                                             *
- *  constant:  1 / sigma^2                                                   *
- *                                                                           *
- *  parameters: 1                                                            *
- *     0:  sigma > 0   ... scale                                             *
- *                                                                           *
- *****************************************************************************
- *                                                                           *
- *   Copyright (c) 2000-2006 Wolfgang Hoermann and Josef Leydold             *
- *   Department of Statistics and Mathematics, WU Wien, Austria              *
+ *   Copyright (c) 2011-2012 Wolfgang Hoermann and Josef Leydold             *
+ *   Institute for Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
  *   it under the terms of the GNU General Public License as published by    *
@@ -56,137 +56,137 @@
 #include "unur_stddistr.h"
 
 /*---------------------------------------------------------------------------*/
-static const char distr_name[] =  "rayleigh";
+
+static const char distr_name[] = "meixner";
 
 /* parameters */
-#define sigma  params[0]
+#define alpha   params[0]    /* scale */
+#define beta    params[1]    /* shape (asymmetry) */
+#define delta   params[2]    /* shape */
+#define mu      params[3]    /* location */
 
 #define DISTR distr->data.cont
 #define LOGNORMCONSTANT (distr->data.cont.norm_constant)
 
 /* function prototypes                                                       */
-static double _unur_pdf_rayleigh( double x, const UNUR_DISTR *distr );
-static double _unur_dpdf_rayleigh( double x, const UNUR_DISTR *distr );
-static double _unur_cdf_rayleigh( double x, const UNUR_DISTR *distr );
+static double _unur_pdf_meixner( double x, const UNUR_DISTR *distr );
+static double _unur_logpdf_meixner( double x, const UNUR_DISTR *distr );
+/* static double _unur_dpdf_meixner( double x, const UNUR_DISTR *distr ); */
+/* static double _unur_cdf_meixner( double x, const UNUR_DISTR *distr ); */
 
-static int _unur_upd_mode_rayleigh( UNUR_DISTR *distr );
-static int _unur_upd_area_rayleigh( UNUR_DISTR *distr );
-static int _unur_set_params_rayleigh( UNUR_DISTR *distr, const double *params, int n_params );
+static int _unur_upd_center_meixner( UNUR_DISTR *distr );
+static double _unur_lognormconstant_meixner( const double *params, int n_params );
+static int _unur_set_params_meixner( UNUR_DISTR *distr, const double *params, int n_params );
 
 /*---------------------------------------------------------------------------*/
 
 double
-_unur_pdf_rayleigh( double x, const UNUR_DISTR *distr )
-{ 
-  register const double *params = DISTR.params;
+_unur_pdf_meixner(double x, const UNUR_DISTR *distr)
+{
+  /* Original implementation by Kemal Dingic */
+  /*  f(x) = exp(beta*(x-mu)/alpha) * |Gamma(delta+ i*(x-mu)/alpha)|^2 */
+
+  return exp(_unur_logpdf_meixner(x,distr));
+} /* end of _unur_pdf_meixner() */
+
+/*---------------------------------------------------------------------------*/
+
+double
+_unur_logpdf_meixner(double x, const UNUR_DISTR *distr)
+{
+  const double *params = DISTR.params;
+  double res;           /* result of computation */
+  double y;             /* auxiliary variables   */
   
-  if (x<=0.) 
-    return 0.;
+  y = (x-mu) / alpha;
+  res = LOGNORMCONSTANT + beta*y + 2*_unur_SF_Relcgamma(delta, y);
 
-  /* else */
-  return (x * exp(-x*x/(2.*sigma*sigma) - LOGNORMCONSTANT ) ); 
-
-} /* end of _unur_pdf_rayleigh() */
+  return res;
+} /* end of _unur_logpdf_meixner() */
 
 /*---------------------------------------------------------------------------*/
-
-double
-_unur_dpdf_rayleigh( double x, const UNUR_DISTR *distr )
-{ 
-  register const double *params = DISTR.params;
-  register double z;
-
-  z = x*x/(sigma*sigma);
-  return ( (x<=0.) ? 0. : exp(-z/2 - LOGNORMCONSTANT) * (1-z) ); 
-} /* end of _unur_dpdf_rayleigh() */
-
-/*---------------------------------------------------------------------------*/
-
-double
-_unur_cdf_rayleigh( double x, const UNUR_DISTR *distr )
-{ 
-  register const double *params = DISTR.params;
-  return ( (x<=0.) ? 0. : 1. - exp(-x*x/(2.*sigma*sigma)) );
-} /* end of _unur_cdf_rayleigh() */
-
-/*---------------------------------------------------------------------------*/
-
 
 int
-_unur_upd_mode_rayleigh( UNUR_DISTR *distr )
+_unur_upd_center_meixner( UNUR_DISTR *distr )
 {
-  DISTR.mode = DISTR.sigma;
+  const double *params = DISTR.params;
 
-  /* mode must be in domain */
-  if (DISTR.mode < DISTR.domain[0]) 
-    DISTR.mode = DISTR.domain[0];
-  else if (DISTR.mode > DISTR.domain[1]) 
-    DISTR.mode = DISTR.domain[1];
+  /* we simply use parameter 'mu' */
+  DISTR.center = mu;
+
+  /* an alternative approach would be the mean of the distribution:          */
+  /* DISTR.center = mu + alpha*delta*tan(beta/2);                            */
+
+  /* center must be in domain */
+  if (DISTR.center < DISTR.domain[0])
+    DISTR.center = DISTR.domain[0];
+  else if (DISTR.center > DISTR.domain[1])
+    DISTR.center = DISTR.domain[1];
 
   return UNUR_SUCCESS;
-} /* end of _unur_upd_mode_rayleigh() */
+} /* end of _unur_upd_center_meixner() */
 
 /*---------------------------------------------------------------------------*/
 
-int
-_unur_upd_area_rayleigh( UNUR_DISTR *distr )
+double
+_unur_lognormconstant_meixner(const double *params, int n_params ATTRIBUTE__UNUSED)
 {
-  /* log of normalization constant */
-  LOGNORMCONSTANT =   2. * log(DISTR.sigma);
+  /*
+    (2*cos(beta/2))^(2*delta) / (2*alpha*pi*Gamma(2*delta))
+  */
 
-  if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.area = 1.;
-    return UNUR_SUCCESS;
-  }
-
-  /* else */
-  DISTR.area = ( _unur_cdf_rayleigh( DISTR.domain[1],distr) 
-		 - _unur_cdf_rayleigh( DISTR.domain[0],distr) );
-  return UNUR_SUCCESS;
-  
-} /* end of _unur_upd_area_rayleigh() */
+  return ( 2.*delta*log(2.*cos(beta/2.))
+	   - (log(2.*alpha*M_PI) + _unur_SF_ln_gamma(2.*delta)));
+} /* end of _unur_normconstant_meixner() */
 
 /*---------------------------------------------------------------------------*/
 
 int
-_unur_set_params_rayleigh( UNUR_DISTR *distr, const double *params, int n_params )
+_unur_set_params_meixner( UNUR_DISTR *distr, const double *params, int n_params )
 {
   /* check number of parameters for distribution */
-  if (n_params < 1) {
+  if (n_params < 4) {
     _unur_error(distr_name,UNUR_ERR_DISTR_NPARAMS,"too few"); return UNUR_ERR_DISTR_NPARAMS; }
-  if (n_params > 1) {
+  if (n_params > 4) {
     _unur_warning(distr_name,UNUR_ERR_DISTR_NPARAMS,"too many");
-    n_params = 1; }
+    n_params = 4; }
   CHECK_NULL(params,UNUR_ERR_NULL);
 
-  /* check parameter sigma */
-  if (sigma <= 0.) {
-    _unur_error(distr_name,UNUR_ERR_DISTR_DOMAIN,"sigma <= 0.");
+  /* check parameter omega */
+  if (alpha <= 0. || delta <= 0.) {
+    _unur_error(distr_name,UNUR_ERR_DISTR_DOMAIN,"alpha or delta <= 0");
+    return UNUR_ERR_DISTR_DOMAIN;
+  }
+
+  if (fabs(beta) >= M_PI) {
+    _unur_error(distr_name,UNUR_ERR_DISTR_DOMAIN,"beta not in (-PI,PI)");
     return UNUR_ERR_DISTR_DOMAIN;
   }
 
   /* copy parameters for standard form */
-  DISTR.sigma = sigma;
+  DISTR.alpha = alpha;
+  DISTR.beta = beta;
+  DISTR.delta = delta;
+  DISTR.mu = mu;
 
   /* default parameters: none */
-  /* copy optional parameters: none */
 
   /* store number of parameters */
   DISTR.n_params = n_params;
 
   /* set (standard) domain */
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = 0.;              /* left boundary  */
-    DISTR.domain[1] = UNUR_INFINITY;   /* right boundary */
+    DISTR.domain[0] = -UNUR_INFINITY;   /* left boundary  */
+    DISTR.domain[1] = UNUR_INFINITY;    /* right boundary */
   }
 
   return UNUR_SUCCESS;
-} /* end of _unur_set_params_rayleigh() */
+} /* end of _unur_set_params_meixner() */
 
 /*---------------------------------------------------------------------------*/
 
 struct unur_distr *
-unur_distr_rayleigh( const double *params, int n_params )
+unur_distr_meixner( const double *params, int n_params)
 {
   register struct unur_distr *distr;
 
@@ -194,51 +194,59 @@ unur_distr_rayleigh( const double *params, int n_params )
   distr = unur_distr_cont_new();
 
   /* set distribution id */
-  distr->id = UNUR_DISTR_RAYLEIGH;
+  distr->id = UNUR_DISTR_MEIXNER;
 
   /* name of distribution */
   distr->name = distr_name;
-
+             
   /* how to get special generators */
-  DISTR.init = NULL;    /* _unur_stdgen_rayleigh_init; */
-                
+  /* DISTR.init = _unur_stdgen_meixner_init; */
+   
   /* functions */
-  DISTR.pdf  = _unur_pdf_rayleigh;  /* pointer to PDF               */
-  DISTR.dpdf = _unur_dpdf_rayleigh; /* pointer to derivative of PDF */
-  DISTR.cdf  = _unur_cdf_rayleigh;  /* pointer to CDF               */
-
+  DISTR.pdf     = _unur_pdf_meixner;     /* pointer to PDF                  */
+  DISTR.logpdf  = _unur_logpdf_meixner;  /* pointer to logPDF               */
+ 
   /* indicate which parameters are set */
   distr->set = ( UNUR_DISTR_SET_DOMAIN |
 		 UNUR_DISTR_SET_STDDOMAIN |
-		 UNUR_DISTR_SET_MODE   |
+		 UNUR_DISTR_SET_CENTER |
 		 UNUR_DISTR_SET_PDFAREA );
-
+                
   /* set parameters for distribution */
-  if (_unur_set_params_rayleigh(distr,params,n_params)!=UNUR_SUCCESS) {
+  if (_unur_set_params_meixner(distr,params,n_params)!=UNUR_SUCCESS) {
     free(distr);
     return NULL;
   }
 
-  /* log of normalization constant */
-  LOGNORMCONSTANT =   2. * log(DISTR.sigma);
+  /* normalization constant */
+  LOGNORMCONSTANT = _unur_lognormconstant_meixner(DISTR.params,DISTR.n_params);
+
+  /* we need the center of the distribution */
+  if (_unur_upd_center_meixner(distr)!=UNUR_SUCCESS) {
+    free(distr);
+    return NULL;
+  }
 
   /* mode and area below p.d.f. */
-  DISTR.mode = DISTR.sigma;
-  DISTR.area = 1.;
+  /* DISTR.mode = ? */
+  DISTR.area = 1;
 
   /* function for setting parameters and updating domain */
-  DISTR.set_params = _unur_set_params_rayleigh;
+  DISTR.set_params = _unur_set_params_meixner;
 
   /* function for updating derived parameters */
-  DISTR.upd_mode  = _unur_upd_mode_rayleigh; /* funct for computing mode */
-  DISTR.upd_area  = _unur_upd_area_rayleigh; /* funct for computing area */
+  /* DISTR.upd_mode  = _unur_upd_mode_meixner; /\* funct for computing mode *\/ */
+  /* DISTR.upd_area  = _unur_upd_area_meixner; /\* funct for computing area *\/ */
 
   /* return pointer to object */
-  return distr; 
+  return distr;
 
-} /* end of unur_distr_rayleigh() */
+} /* end of unur_distr_meixner() */
 
 /*---------------------------------------------------------------------------*/
-#undef sigma
+#undef alpha
+#undef beta
+#undef delta
+#undef mu
 #undef DISTR
 /*---------------------------------------------------------------------------*/

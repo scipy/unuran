@@ -10,7 +10,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2000-2010 Wolfgang Hoermann and Josef Leydold             *
+ *   Copyright (c) 2000-2011 Wolfgang Hoermann and Josef Leydold             *
  *   Department of Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -35,7 +35,6 @@
 #include <unur_source.h>
 #include <methods/cstd.h>
 #include <methods/cstd_struct.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions_source.h"
 
 /*---------------------------------------------------------------------------*/
@@ -52,7 +51,7 @@ inline static int gig_gigru_init( struct unur_gen *gen );
 
 #define uniform()  _unur_call_urng(gen->urng) /* call for uniform prng       */
 
-#define MAX_gen_params 10      /* maximal number of parameters for generator */
+/* #define MAX_gen_params (10)    maximal number of parameters for generator */
 
 #define theta  (DISTR.params[0])    /* shape */
 #define omega  (DISTR.params[1])    /* scale */
@@ -135,6 +134,7 @@ _unur_stdgen_gig_init( struct unur_par *par, struct unur_gen *gen )
  *****************************************************************************/
 
 /*---------------------------------------------------------------------------*/
+#define GEN_N_PARAMS (10)
 #define m       (GEN->gen_param[0])
 #define linvmax (GEN->gen_param[1])
 #define vminus  (GEN->gen_param[2])
@@ -159,9 +159,9 @@ gig_gigru_init( struct unur_gen *gen )
   CHECK_NULL(gen,UNUR_ERR_NULL);
   COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_ERR_COOKIE);
 
-  if (GEN->gen_param == NULL) {
-    GEN->n_gen_param = MAX_gen_params;
-    GEN->gen_param = _unur_xmalloc(GEN->n_gen_param * sizeof(double));
+  if (GEN->gen_param == NULL || GEN->n_gen_param != GEN_N_PARAMS) {
+    GEN->n_gen_param = GEN_N_PARAMS;
+    GEN->gen_param = _unur_xrealloc(GEN->gen_param, GEN->n_gen_param * sizeof(double));
   }
 
   /* -X- setup code -X- */
@@ -189,6 +189,9 @@ gig_gigru_init( struct unur_gen *gen )
     /* c = 1/log{sqrt[hx(xm)]} */
     c = -d * log(xm) - e * r;
     /* vminus = 0 */
+
+    /* initialize remaining (unused) variables */
+    hm12 = b2 = vdiff = vminus = linvmax = m = 0.;
   }
   else {
     /* SHIFT BY m */
@@ -220,6 +223,9 @@ gig_gigru_init( struct unur_gen *gen )
 		  - b2*(invy2 + m + 1./(invy2 + m)));
     vdiff = vplus - vminus;
     /* uplus = 1 */
+
+    /* initialize remaining (unused) variables */
+    c = e = d = a = 0.;
   }
 
   /* -X- end of setup code -X- */
@@ -234,8 +240,8 @@ _unur_stdgen_sample_gig_gigru( struct unur_gen *gen )
   double U,V,X,Z;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);
-  COOKIE_CHECK(gen,CK_CSTD_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);
+  COOKIE_CHECK(gen,CK_CSTD_GEN,UNUR_INFINITY);
 
   /* -X- generator code -X- */
   if (theta<=1. && omega<=1.) {
@@ -267,6 +273,7 @@ _unur_stdgen_sample_gig_gigru( struct unur_gen *gen )
 } /* end of _unur_stdgen_sample_gig_gigru() */
 
 /*---------------------------------------------------------------------------*/
+#undef GEN_N_PARAMS
 #undef m
 #undef linvmax
 #undef vminus

@@ -740,7 +740,7 @@ _unur_tdr_starting_cpoints( struct unur_gen *gen )
   /* we have left the loop with the right boundary of the support of PDF
      make shure that we will never use iv for sampling. */
   iv->Asqueeze = iv->Ahat = iv->Ahatr = iv->sq = 0.;
-  iv->Acum = INFINITY;
+  iv->Acum = UNUR_INFINITY;
   iv->ip = iv->x;
   iv->fip = iv->fx;
   iv->next = NULL;         /* terminate list */
@@ -800,7 +800,7 @@ _unur_tdr_run_dars( struct unur_gen *gen )
   /* check arguments */
   CHECK_NULL(gen,UNUR_ERR_NULL);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_ERR_COOKIE);
   
-  /* there is no need to run DARS when the DARS factor is INFINITY */
+  /* there is no need to run DARS when the DARS factor is UNUR_INFINITY */
   if (_unur_FP_is_infinity(GEN->darsfactor))
     return UNUR_SUCCESS;
 
@@ -883,9 +883,9 @@ _unur_tdr_interval_new( struct unur_gen *gen, double x, double fx, int is_mode )
   iv->x = x;              /* point x */
   iv->fx = fx;            /* value of PDF at x */
   
-  if (fx<=0.) {           /* --> -INFINITY */
-    iv->Tfx = -INFINITY;  /* transformed density */
-    iv->dTfx = INFINITY;  /* derivative of transformed density */
+  if (fx<=0.) {           /* --> -UNUR_INFINITY */
+    iv->Tfx = -UNUR_INFINITY;  /* transformed density */
+    iv->dTfx = UNUR_INFINITY;  /* derivative of transformed density */
     return iv;
   }
   
@@ -938,9 +938,9 @@ _unur_tdr_interval_new( struct unur_gen *gen, double x, double fx, int is_mode )
     break;
   }
 
-  /* the program requires dTfx > -INFINITY */
-  if ( !(iv->dTfx > -INFINITY))
-    iv->dTfx = INFINITY;
+  /* the program requires dTfx > -UNUR_INFINITY */
+  if ( !(iv->dTfx > -UNUR_INFINITY))
+    iv->dTfx = UNUR_INFINITY;
 
   return iv;
 
@@ -974,7 +974,7 @@ _unur_tdr_tangent_intersection_point( struct unur_gen *gen, struct unur_tdr_inte
 
   /* 
      case: there is no tangent at one of the boundary points of the interval
-           (then the slope is INFINITY)
+           (then the slope is UNUR_INFINITY)
      or
      case: the tangents are too steep  (--> case (3))
   */
@@ -996,12 +996,12 @@ _unur_tdr_tangent_intersection_point( struct unur_gen *gen, struct unur_tdr_inte
        thus we ignore this case. */
     if ( fabs(iv->dTfx) < DBL_EPSILON * fabs(iv->next->dTfx) ) {
       *ipt = iv->x;        /* intersection point = left boundary of interval */
-      iv->dTfx = INFINITY;
+      iv->dTfx = UNUR_INFINITY;
       return UNUR_SUCCESS; 
     }
     else if ( fabs(iv->next->dTfx) < DBL_EPSILON * fabs(iv->dTfx) ) {
       *ipt = iv->next->x;   /* intersection point = right boundary of interval */
-      iv->next->dTfx = INFINITY;
+      iv->next->dTfx = UNUR_INFINITY;
       return UNUR_SUCCESS; 
     }
     else {
@@ -1061,7 +1061,7 @@ _unur_tdr_interval_area( struct unur_gen *gen, struct unur_tdr_interval *iv, dou
      /*   area                                                                    */
      /*                                                                           */
      /* error:                                                                    */
-     /*   return INFINITY                                                         */
+     /*   return UNUR_INFINITY                                                    */
      /*                                                                           */
      /* comment:                                                                  */
      /*   x0    ... construction point of tangent (= iv->x)                       */
@@ -1082,11 +1082,11 @@ _unur_tdr_interval_area( struct unur_gen *gen, struct unur_tdr_interval *iv, dou
   double area = 0.;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
-  CHECK_NULL(iv,INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
+  CHECK_NULL(iv,UNUR_INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
 
   /* if the construction point is at infinity, we cannot compute an area.
-     (in this case we should have x == iv->x == INFINITY). */
+     (in this case we should have x == iv->x == UNUR_INFINITY). */
   if (_unur_FP_is_infinity(iv->x) || _unur_FP_is_minus_infinity(iv->x))
     return 0.;
 
@@ -1097,8 +1097,8 @@ _unur_tdr_interval_area( struct unur_gen *gen, struct unur_tdr_interval *iv, dou
   /* unbounded? */
   if ( _unur_FP_is_infinity(slope)    ||
        (_unur_FP_is_minus_infinity(x) && slope<=0.) ||
-       (_unur_FP_is_infinity(x)       && slope>=0.)  )   /* we have set (Tf)'(x) = INFINITY, if f(x)=0 */
-    return INFINITY;
+       (_unur_FP_is_infinity(x)       && slope>=0.)  ) /* we have set (Tf)'(x) = UNUR_INFINITY, if f(x)=0 */
+    return UNUR_INFINITY;
 
   switch( gen->variant & TDR_VARMASK_T ) {
 
@@ -1127,7 +1127,7 @@ _unur_tdr_interval_area( struct unur_gen *gen, struct unur_tdr_interval *iv, dou
     }
     else { /* hat/squeeze almost constant */
       if (_unur_FP_is_infinity(x) || _unur_FP_is_minus_infinity(x))
-	return INFINITY;
+	return UNUR_INFINITY;
       else
 	area = iv->fx * (x - iv->x);
     }
@@ -1144,14 +1144,14 @@ _unur_tdr_interval_area( struct unur_gen *gen, struct unur_tdr_interval *iv, dou
 	/* the transformed hat must always be below the x-axis.
 	   otherwise the area below the hat in unbounded. */
 	if (hx>=0.)
-	  return INFINITY; 
+	  return UNUR_INFINITY; 
 	else
 	  area = (x - iv->x) / ( iv->Tfx * hx );
       }
     }
     else { /* hat/squeeze almost constant */
       if (_unur_FP_is_infinity(x) || _unur_FP_is_minus_infinity(x))
-	return INFINITY;
+	return UNUR_INFINITY;
       else
 	area = iv->fx * (x - iv->x);
     }
@@ -1186,7 +1186,7 @@ _unur_tdr_interval_xxarea( struct unur_gen *gen, struct unur_tdr_interval *iv, d
      /*   the function (hat or squeeze).)                                         */
      /*                                                                           */
      /* error:                                                                    */
-     /*   return INFINITY                                                         */
+     /*   return UNUR_INFINITY                                                    */
      /*                                                                           */
      /* comment:                                                                  */
      /*   x0    ... construction point of tangent (= iv->x)                       */
@@ -1212,11 +1212,11 @@ _unur_tdr_interval_xxarea( struct unur_gen *gen, struct unur_tdr_interval *iv, d
   double hx,u;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
-  CHECK_NULL(iv,INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
+  CHECK_NULL(iv,UNUR_INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
 
   /* if the construction point is at infinity, we cannot compute the integral
-     (in this case we should have x == iv->x == INFINITY). */
+     (in this case we should have x == iv->x == UNUR_INFINITY). */
   if (_unur_FP_is_infinity(iv->x) || _unur_FP_is_minus_infinity(iv->x))
     return 0.;
 
@@ -1227,8 +1227,8 @@ _unur_tdr_interval_xxarea( struct unur_gen *gen, struct unur_tdr_interval *iv, d
   /* unbounded? */
   if ( _unur_FP_is_infinity(slope)    ||
        (_unur_FP_is_minus_infinity(x) && slope<=0.) ||
-       (_unur_FP_is_infinity(x)       && slope>=0.)  )   /* we have set (Tf)'(x) = INFINITY, if f(x)=0 */
-    return INFINITY;
+       (_unur_FP_is_infinity(x)       && slope>=0.)  ) /* we have set (Tf)'(x) = UNUR_INFINITY, if f(x)=0 */
+    return UNUR_INFINITY;
 
 
   switch( gen->variant & TDR_VARMASK_T ) {
@@ -1260,8 +1260,8 @@ _unur_tdr_interval_xxarea( struct unur_gen *gen, struct unur_tdr_interval *iv, d
 
   case TDR_VAR_T_SQRT:    /* T(x) = -1./sqrt(x) */
     if (_unur_FP_is_infinity(x) || _unur_FP_is_minus_infinity(x))
-      /* the integral becomes INFINITY */
-      return INFINITY;
+      /* the integral becomes UNUR_INFINITY */
+      return UNUR_INFINITY;
 
     /* compute value of transformed hat at integration boundary */
     hx = iv->Tfx + slope * (x - iv->x);
@@ -1269,7 +1269,7 @@ _unur_tdr_interval_xxarea( struct unur_gen *gen, struct unur_tdr_interval *iv, d
     if (hx >= 0.)
       /* the transformed hat must always be below the x-axis.
 	 otherwise the area below the hat in unbounded. */
-      return INFINITY; 
+      return UNUR_INFINITY; 
 
     u = (x-iv->x) * slope / iv->Tfx;
 
@@ -1315,10 +1315,10 @@ _unur_tdr_eval_intervalhat( struct unur_gen *gen, struct unur_tdr_interval *iv, 
      /* return:                                                              */
      /*   hat(x) or                                                          */
      /*   0. if x is not finite or                                           */
-     /*   INFINITY the hat cannot be computed                                */
+     /*   UNUR_INFINITY the hat cannot be computed                           */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*                                                                      */
      /* comment:                                                             */
      /*   x0    ... construction point of tangent (= iv->x)                  */
@@ -1332,12 +1332,12 @@ _unur_tdr_eval_intervalhat( struct unur_gen *gen, struct unur_tdr_interval *iv, 
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
-  CHECK_NULL(iv,INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,INFINITY); 
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
+  CHECK_NULL(iv,UNUR_INFINITY);   COOKIE_CHECK(iv,CK_TDR_IV,UNUR_INFINITY); 
 
   /* we cannot compute the hat at x if any of the parameters are not finite  */
   if ( _unur_FP_is_minus_infinity(iv->Tfx) || _unur_FP_is_infinity(iv->dTfx) )
-    return INFINITY;
+    return UNUR_INFINITY;
 
   /* at +/- infinity the hat should be 0 (or infinity) */
   if ( _unur_FP_is_infinity(x) || _unur_FP_is_minus_infinity(x) ||
@@ -1357,17 +1357,17 @@ _unur_tdr_eval_intervalhat( struct unur_gen *gen, struct unur_tdr_interval *iv, 
       /* compute value of transformed hat at x */
       double hx = iv->Tfx + iv->dTfx * (x - iv->x);
       /* hx must be less than 0 ! */
-      return ((hx<0.) ? 1./(hx*hx) : INFINITY);
+      return ((hx<0.) ? 1./(hx*hx) : UNUR_INFINITY);
     }
 
   case TDR_VAR_T_POW:
     /* T(x) = -1./x^c */
     /** TODO **/
-    return INFINITY;
+    return UNUR_INFINITY;
 
   default:
     _unur_error(GENTYPE,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
 } /* end of _unur_tdr_eval_intervalhat() */

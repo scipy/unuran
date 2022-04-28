@@ -379,6 +379,12 @@ UNUR_DISTR *unur_distr_lognormal(const double *params, int n_params);
 UNUR_DISTR *unur_distr_lomax(const double *params, int n_params);
 
 /*---------------------------------------------------------------------------*/
+/* Meixner distribution                                                      */
+
+/*  Only pdf is implemented when macro 'HAVE_LIBRMATH' is defined!           */
+UNUR_DISTR *unur_distr_meixner(const double *params, int n_params);
+
+/*---------------------------------------------------------------------------*/
 /* Normal distribution  [2; ch.13, p.80]                                     */
 /* 
    =DISTR    normal  Normal distribution
@@ -517,6 +523,12 @@ UNUR_DISTR *unur_distr_triangular(const double *params, int n_params);
    =EON
 */
 UNUR_DISTR *unur_distr_uniform(const double *params, int n_params);
+
+/*---------------------------------------------------------------------------*/
+/* Variance Gamma distribution                                               */
+
+/*  Only pdf is implemented when macro 'HAVE_LIBRMATH' is defined!           */
+UNUR_DISTR *unur_distr_vg(const double *params, int n_params);
 
 /*---------------------------------------------------------------------------*/
 /* Weibull distribution  [2; ch.21, p.628]                                   */

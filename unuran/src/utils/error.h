@@ -121,10 +121,10 @@
       The default behavior of the error handler is to print a short
       message:
 
-      @smallexample
+      @example
       AROU.004: [error] arou.c:1500 - (generator) condition for method violated:
       AROU.004: ..>  PDF not unimodal
-      @end smallexample
+      @end example
 
       The purpose of the error handler is to provide a function
       where a breakpoint can be set that will catch library errors when
@@ -176,10 +176,10 @@ const char *unur_get_strerror ( const int errnocode );
       short message onto the output stream, usually a logfile
       (@pxref{Output_streams,,Output streams}), e.g.,
 
-      @smallexample
+      @example
       AROU.004: [error] arou.c:1500 - (generator) condition for method violated:
       AROU.004: ..>  PDF not unimodal
-      @end smallexample
+      @end example
 
       This error handler can be switched off using the
       unur_set_error_handler_off() call, or replace it by a new one.

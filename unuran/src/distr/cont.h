@@ -514,7 +514,7 @@ int unur_distr_cont_set_mode( UNUR_DISTR *distribution, double mode );
    @code{unur_errno} is set to @code{UNUR_ERR_DISTR_SET}.
    For distributions with unbounded density, this call is used to set
    the pole of the PDF. Notice that the PDF should then return
-   UNUR_INFINITY at the pole.
+   @code{UNUR_INFINITY} at the pole.
    Notice that the mode is adjusted when the domain is set, see the
    remark for the unur_distr_cont_set_domain() call.
 */

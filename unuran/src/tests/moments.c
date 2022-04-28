@@ -136,10 +136,13 @@ unur_test_moments( UNUR_GEN *gen, double *moments, int n_moments, int samplesize
       switch (n_moments) {
       case 4:
         moments[idx(d,4)] -= dx * (4.*moments[idx(d,3)] - dx * (6.*moments[idx(d,2)] + an1*(1. + an1*an1*an1)*dx2));
+	/* FALLTHROUGH */
       case 3:
         moments[idx(d,3)] -= dx * (3.*moments[idx(d,2)] - an*an1*(an-2.)*dx2);
+	/* FALLTHROUGH */
       case 2:
         moments[idx(d,2)] += an * an1 * dx2;
+	/* FALLTHROUGH */
       case 1:
         moments[idx(d,1)] += dx;
       }

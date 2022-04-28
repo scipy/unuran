@@ -65,7 +65,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -120,7 +119,7 @@ _unur_logpdf_exponential( double x, const UNUR_DISTR *distr )
     x = (x - theta) / sigma;
 
   /* standard form */
-  return ( (x<0.) ? -INFINITY : (-x - LOGNORMCONSTANT) );
+  return ( (x<0.) ? -UNUR_INFINITY : (-x - LOGNORMCONSTANT) );
 
 } /* end of _unur_logpdf_exponential() */
 
@@ -252,9 +251,11 @@ _unur_set_params_exponential( UNUR_DISTR *distr, const double *params, int n_par
   switch (n_params) {
   case 2:
     DISTR.theta = theta;
+    /* FALLTHROUGH */
   case 1:
     DISTR.sigma = sigma;
     n_params = 2;           /* number of parameters for non-standard form */
+    /* FALLTHROUGH */
   default:
     break;
   }
@@ -266,7 +267,7 @@ _unur_set_params_exponential( UNUR_DISTR *distr, const double *params, int n_par
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
   /* domain */
     DISTR.domain[0] = DISTR.theta;     /* left boundary  */
-    DISTR.domain[1] = INFINITY;        /* right boundary */
+    DISTR.domain[1] = UNUR_INFINITY;   /* right boundary */
   }
 
   return UNUR_SUCCESS;

@@ -10,7 +10,7 @@
  *                                                                           *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2000-2006 Wolfgang Hoermann and Josef Leydold             *
+ *   Copyright (c) 2000-2012 Wolfgang Hoermann and Josef Leydold             *
  *   Department of Statistics and Mathematics, WU Wien, Austria              *
  *                                                                           *
  *   This program is free software; you can redistribute it and/or modify    *
@@ -37,6 +37,10 @@
 #include <time.h>
 #include <stdarg.h>
 #include <ctype.h>
+
+#ifdef R_UNURAN
+#include <R_ext/Error.h>
+#endif
 
 /*---------------------------------------------------------------------------*/
 
@@ -177,7 +181,7 @@ _unur_logfile_open( void )
 
   if (LOG) return LOG;  /* log file already open */
 
-#ifdef UNUR_ENABLE_LOGGING
+#if defined(UNUR_ENABLE_LOGGING)
   /* logging enabled: print error messages into log file */
 
   /* open log file */
@@ -201,6 +205,18 @@ _unur_logfile_open( void )
   }
 
   fprintf(LOG,"\n=======================================================\n\n");
+
+#elif defined(R_UNURAN)
+  /* Inside R package 'Runuran'.                                     */
+  /* We do not need an output stream. So we could use 'stderr' as we */
+  /* do not write anything at all. However, R CMD check complains.   */
+  /* We also just could use NULL. However, this surely results in a  */
+  /* segfault in the unlikely case that we accidently ask for        */
+  /* output handle 'LOG'. Thus we open file UNUR_LOG_FILE.           */
+
+  LOG = fopen(UNUR_LOG_FILE,"w");
+
+  if (!LOG) { error("Cannot open LOG file."); }
 
 #else
   /* logging disabled: print error messages into stderr */

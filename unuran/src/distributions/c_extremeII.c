@@ -73,7 +73,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -253,9 +252,11 @@ _unur_set_params_extremeII( UNUR_DISTR *distr, const double *params, int n_param
   switch (n_params) {
   case 3:
     DISTR.theta = theta;
+    /* FALLTHROUGH */
   case 2:
     DISTR.zeta = zeta;
     n_params = 3;           /* number of parameters for non-standard form */
+    /* FALLTHROUGH */
   default:
     break;
   }
@@ -266,7 +267,7 @@ _unur_set_params_extremeII( UNUR_DISTR *distr, const double *params, int n_param
   /* set (standard) domain */
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.domain[0] = DISTR.zeta;      /* left boundary  */
-    DISTR.domain[1] = INFINITY;        /* right boundary */
+    DISTR.domain[1] = UNUR_INFINITY;   /* right boundary */
   }
 
   return UNUR_SUCCESS;

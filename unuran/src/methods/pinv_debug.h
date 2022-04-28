@@ -219,7 +219,7 @@ _unur_pinv_debug_intervals( const struct unur_gen *gen )
      /*   gen ... pointer to generator object                                */
      /*----------------------------------------------------------------------*/
 {
-  int n;
+  int n, j;
   FILE *LOG;
 
   /* check arguments */
@@ -228,26 +228,23 @@ _unur_pinv_debug_intervals( const struct unur_gen *gen )
   LOG = unur_get_stream();
 
   if (gen->debug & PINV_DEBUG_TABLE) {
+
     for (n=0; n<=GEN->n_ivs; n++) {
-      fprintf(LOG,"%s: [%3d] xi = %.14g, cdfi = %.14g\n",gen->genid,
+      fprintf(LOG,"%s: [%3d] xi = %.16g, cdfi = %.14g\n",gen->genid,
 	      n, GEN->iv[n].xi, GEN->iv[n].cdfi);
 
-#ifdef PINV_DEVEL
-      { 
-	int j;
-	/* coefficients for constructing Newton interpolation */
-	fprintf(LOG,"%s:\tui = %.14g",gen->genid, GEN->iv[n].ui[0]);
-	for (j=1; j<GEN->order; j++)
-	  fprintf(LOG,", %.14g",GEN->iv[n].ui[j]);
-	
-	fprintf(LOG,"\n%s:\tzi = %.14g",gen->genid, GEN->iv[n].zi[0]);
-	for (j=1; j<GEN->order; j++)
-	  fprintf(LOG,", %.14g",GEN->iv[n].zi[j]);
+      /* coefficients for constructing Newton interpolation */
+      fprintf(LOG,"%s:\tui = %.16g",gen->genid, GEN->iv[n].ui[0]);
+      for (j=1; j<GEN->order; j++)
+	fprintf(LOG,", %.14g",GEN->iv[n].ui[j]);
+      
+      fprintf(LOG,"\n%s:\tzi = %.16g",gen->genid, GEN->iv[n].zi[0]);
+      for (j=1; j<GEN->order; j++)
+	fprintf(LOG,", %.16g",GEN->iv[n].zi[j]);
 
-	fprintf(LOG,"\n");
-      }	
-#endif
+      fprintf(LOG,"\n");
     }
+
   }
 
   fprintf(LOG,"%s:\n",gen->genid);
@@ -279,10 +276,10 @@ _unur_pinv_debug_create_table (const struct unur_gen *gen,
   LOG = unur_get_stream();
 
   fprintf(LOG,"%s: Create interpolating polynomials:\n",gen->genid);
-  fprintf(LOG,"%s:\t# iterations   = %d\n",gen->genid,iter);
-  fprintf(LOG,"%s:\t# increasing h = %d  (%g%%)\n",gen->genid,n_incr_h,(100.*n_incr_h)/iter);
-  fprintf(LOG,"%s:\t# decreasing h = %d  (%g%%)\n",gen->genid,n_decr_h,(100.*n_decr_h)/iter);
-  fprintf(LOG,"%s:\t# linear       = %d  (%g%%)\n",gen->genid,n_use_linear,(100.*n_use_linear)/iter);
+  fprintf(LOG,"%s:\t# iterations          = %d\n",gen->genid,iter);
+  fprintf(LOG,"%s:\t# step size increased = %d  (%g%%)\n",gen->genid,n_incr_h,(100.*n_incr_h)/iter);
+  fprintf(LOG,"%s:\t# step size decreased = %d  (%g%%)\n",gen->genid,n_decr_h,(100.*n_decr_h)/iter);
+  fprintf(LOG,"%s:\t# linear              = %d  (%g%%)\n",gen->genid,n_use_linear,(100.*n_use_linear)/iter);
   fprintf(LOG,"%s:\n",gen->genid);
 
   fflush(LOG);

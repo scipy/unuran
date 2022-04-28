@@ -508,7 +508,7 @@ unur_hinv_set_boundary( struct unur_par *par, double left, double right )
      /*   error code   ... on error                                          */
      /*                                                                      */
      /* comment:                                                             */
-     /*   new boundary points must not be +/- INFINITY                       */
+     /*   new boundary points must not be +/- UNUR_INFINITY                  */
      /*----------------------------------------------------------------------*/
 {
   /* check arguments */
@@ -520,8 +520,8 @@ unur_hinv_set_boundary( struct unur_par *par, double left, double right )
     _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"domain");
     return UNUR_ERR_PAR_SET;
   }
-  if (left <= -INFINITY || right >= INFINITY) {
-    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"domain (+/- INFINITY not allowed)");
+  if (left <= -UNUR_INFINITY || right >= UNUR_INFINITY) {
+    _unur_warning(GENTYPE,UNUR_ERR_PAR_SET,"domain (+/- UNUR_INFINITY not allowed)");
     return UNUR_ERR_PAR_SET;
   }
 
@@ -651,7 +651,7 @@ unur_hinv_chg_truncated( struct unur_gen *gen, double left, double right )
      /*   error code   ... on error                                          */
      /*                                                                      */
      /* comment:                                                             */
-     /*   the new boundary points may be +/- INFINITY                        */
+     /*   the new boundary points may be +/- UNUR_INFINITY                   */
      /*----------------------------------------------------------------------*/
 {
   double Umin, Umax, Uminbound, Umaxbound;
@@ -686,8 +686,8 @@ unur_hinv_chg_truncated( struct unur_gen *gen, double left, double right )
   Umaxbound = _unur_min(1.,GEN->intervals[(GEN->N-1)*(GEN->order+2)]);
 
   /* set bounds of U -- in respect to given bounds */
-  Umin = (left > -INFINITY) ? CDF(left)  : 0.;
-  Umax = (right < INFINITY) ? CDF(right) : 1.;
+  Umin = (left > -UNUR_INFINITY) ? CDF(left)  : 0.;
+  Umax = (right < UNUR_INFINITY) ? CDF(right) : 1.;
 
   /* check result */
   if (Umin > Umax) {
@@ -962,8 +962,8 @@ _unur_hinv_check_par( struct unur_gen *gen )
   DISTR.trunc[1] = DISTR.domain[1];
 
   /* set bounds of U -- in respect to given bounds                          */
-  GEN->CDFmin = (DISTR.domain[0] > -INFINITY) ? _unur_cont_CDF((DISTR.domain[0]),(gen->distr)) : 0.;
-  GEN->CDFmax = (DISTR.domain[1] < INFINITY)  ? _unur_cont_CDF((DISTR.domain[1]),(gen->distr)) : 1.;
+  GEN->CDFmin = (DISTR.domain[0] > -UNUR_INFINITY) ? _unur_cont_CDF((DISTR.domain[0]),(gen->distr)) : 0.;
+  GEN->CDFmax = (DISTR.domain[1] < UNUR_INFINITY)  ? _unur_cont_CDF((DISTR.domain[1]),(gen->distr)) : 1.;
 
   if (!_unur_FP_less(GEN->CDFmin,GEN->CDFmax)) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"CDF not increasing");
@@ -971,11 +971,11 @@ _unur_hinv_check_par( struct unur_gen *gen )
   }
 
   /* cut points for tails */
-  if (DISTR.domain[0] <= -INFINITY || 
+  if (DISTR.domain[0] <= -UNUR_INFINITY || 
       (DISTR.pdf!=NULL && _unur_cont_PDF((DISTR.domain[0]),(gen->distr))<=0.) ) {
     GEN->tailcutoff_left = tailcutoff;
   }
-  if (DISTR.domain[1] >= INFINITY || 
+  if (DISTR.domain[1] >= UNUR_INFINITY || 
       (DISTR.pdf!=NULL && _unur_cont_PDF((DISTR.domain[1]),(gen->distr))<=0.) ) {
     GEN->tailcutoff_right = 1.- tailcutoff;
   }
@@ -1077,13 +1077,13 @@ _unur_hinv_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double U,X;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HINV_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HINV_GEN,UNUR_INFINITY);
 
   /* sample from U( Umin, Umax ) */
   U = GEN->Umin + _unur_call_urng(gen->urng) * (GEN->Umax - GEN->Umin);
@@ -1114,13 +1114,13 @@ _unur_hinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
      /*   double (approximate inverse CDF)                                   */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   int i;
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_HINV_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_HINV_GEN,UNUR_INFINITY);
 
   /* look up in guide table and search for interval */
   i =  GEN->guide[(int) (GEN->guide_size*u)];
@@ -1151,18 +1151,18 @@ unur_hinv_eval_approxinvcdf( const struct unur_gen *gen, double u )
      /*   double (approximate inverse CDF)                                   */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 { 
   double x;
 
   /* check arguments */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
   if ( gen->method != UNUR_METH_HINV ) {
     _unur_error(gen->genid,UNUR_ERR_GEN_INVALID,"");
-    return INFINITY; 
+    return UNUR_INFINITY; 
   }
-  COOKIE_CHECK(gen,CK_HINV_GEN,INFINITY);
+  COOKIE_CHECK(gen,CK_HINV_GEN,UNUR_INFINITY);
 
   if ( ! (u>0. && u<1.)) {
     if ( ! (u>=0. && u<=1.)) {
@@ -1261,7 +1261,7 @@ _unur_hinv_find_boundary( struct unur_gen *gen )
       break;
 
     /* otherwise ... */
-    if (DISTR.domain[0] <= -INFINITY) {
+    if (DISTR.domain[0] <= -UNUR_INFINITY) {
       /* domain not bounded from below */
       x = (GEN->bleft > -1.) ? -1. : 10.*GEN->bleft;
       if (! _unur_isfinite(x) )  
@@ -1297,7 +1297,7 @@ _unur_hinv_find_boundary( struct unur_gen *gen )
       break;
 
     /* otherwise ... */
-    if (DISTR.domain[1] >= INFINITY) {
+    if (DISTR.domain[1] >= UNUR_INFINITY) {
       /* domain not bounded from above */
       x = (GEN->bright < 1.) ? 1. : 10.*GEN->bright;
       if (! _unur_isfinite(x) )  
@@ -1448,8 +1448,10 @@ _unur_hinv_interval_new( struct unur_gen *gen, double p, double u )
   switch (GEN->order) {
   case 5:
     iv->df = dPDF(p);
+    /* FALLTHROUGH */
   case 3:
     iv->f = PDF(p);
+    /* FALLTHROUGH */
   case 1:
     iv->p = p;
     iv->u = u;
@@ -1653,8 +1655,8 @@ _unur_hinv_interval_parameter( struct unur_gen *gen, struct unur_hinv_interval *
 
   case 5:    /* quintic Hermite interpolation */
     if (iv->f > 0. && iv->next->f > 0. &&
-	iv->df < INFINITY && iv->df > -INFINITY && 
-	iv->next->df < INFINITY && iv->next->df > -INFINITY ) {
+	iv->df < UNUR_INFINITY && iv->df > -UNUR_INFINITY && 
+	iv->next->df < UNUR_INFINITY && iv->next->df > -UNUR_INFINITY ) {
       f1   = delta_p;
       fs0  = delta_u / iv->f;      
       fs1  = delta_u / iv->next->f;
@@ -1674,6 +1676,7 @@ _unur_hinv_interval_parameter( struct unur_gen *gen, struct unur_hinv_interval *
       iv->spline[4] = 0.;
       iv->spline[5] = 0.;
     }
+    /* FALLTHROUGH */
 
   case 3:    /* cubic Hermite interpolation */
     if (iv->f > 0. && iv->next->f > 0.) {
@@ -1688,6 +1691,7 @@ _unur_hinv_interval_parameter( struct unur_gen *gen, struct unur_hinv_interval *
       iv->spline[2] = 0.;
       iv->spline[3] = 0.;
     }
+    /* FALLTHROUGH */
 
   case 1:    /* linear interpolation */
     iv->spline[0] = iv->p;

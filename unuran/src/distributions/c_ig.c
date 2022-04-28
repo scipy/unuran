@@ -53,7 +53,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -107,7 +106,7 @@ _unur_logpdf_ig( double x, const UNUR_DISTR *distr )
   register const double *params = DISTR.params;
 
   if (x<0.)
-    return -INFINITY;
+    return -UNUR_INFINITY;
 
   else
     return ( 0.5* log ( lambda/(2*M_PI*x*x*x) )
@@ -245,7 +244,7 @@ _unur_set_params_ig( UNUR_DISTR *distr, const double *params, int n_params )
   /* set (standard) domain */
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
     DISTR.domain[0] = 0.;             /* left boundary  */
-    DISTR.domain[1] = INFINITY;        /* right boundary */
+    DISTR.domain[1] = UNUR_INFINITY;  /* right boundary */
   }
 
   return UNUR_SUCCESS;

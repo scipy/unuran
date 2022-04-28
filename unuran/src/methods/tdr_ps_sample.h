@@ -50,7 +50,7 @@ _unur_tdr_ps_sample( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*                                                                      */
      /*======================================================================*/
      /* comment:                                                             */
@@ -92,11 +92,11 @@ _unur_tdr_ps_sample( struct unur_gen *gen )
   double Thx;                  /* value of transformed hat at X              */
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
 
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
 
   /* main URNG */
@@ -153,7 +153,7 @@ _unur_tdr_ps_sample( struct unur_gen *gen )
 
     default:
       _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-      return INFINITY;
+      return UNUR_INFINITY;
 
     } /* end switch */
 
@@ -175,7 +175,7 @@ _unur_tdr_ps_sample( struct unur_gen *gen )
     case TDR_VAR_T_POW:
       /** TODO **/
     default:
-      return INFINITY;
+      return UNUR_INFINITY;
     } /* end switch */
 
     /* evaluate PDF at X */
@@ -216,7 +216,7 @@ _unur_tdr_ps_sample_check( struct unur_gen *gen )
      /*   double (sample from random variate)                                */
      /*                                                                      */
      /* error:                                                               */
-     /*   return INFINITY                                                    */
+     /*   return UNUR_INFINITY                                               */
      /*----------------------------------------------------------------------*/
 {
   UNUR_URNG *urng;             /* pointer to uniform random number generator */
@@ -225,14 +225,16 @@ _unur_tdr_ps_sample_check( struct unur_gen *gen )
   double X;                    /* generated point                            */
   double fx, sqx, hx;          /* values of density, squeeze, and hat at X   */
   int squeeze_rejection = FALSE; /* indicates squeeze rejection              */
+#ifdef UNUR_ENABLE_LOGGING
   int error = 0;               /* indicates error                            */
+#endif
 
   /* check arguments */
-  CHECK_NULL(gen,INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,INFINITY);
+  CHECK_NULL(gen,UNUR_INFINITY);  COOKIE_CHECK(gen,CK_TDR_GEN,UNUR_INFINITY);
 
   if (GEN->iv == NULL) {
     _unur_error(gen->genid,UNUR_ERR_GEN_DATA,"empty generator object");
-    return INFINITY;
+    return UNUR_INFINITY;
   } 
 
   /* main URNG */
@@ -259,15 +261,21 @@ _unur_tdr_ps_sample_check( struct unur_gen *gen )
     /* check result */
     if (_unur_FP_less(X, DISTR.BD_LEFT) || _unur_FP_greater(X, DISTR.BD_RIGHT) ) {
       _unur_warning(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"generated point out of domain");
+#ifdef UNUR_ENABLE_LOGGING
       error = 1;
+#endif
     }
     if (_unur_FP_greater(fx, hx)) {
       _unur_warning(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF > hat. Not T-concave!");
+#ifdef UNUR_ENABLE_LOGGING
       error = 1;
+#endif
     }
     if (_unur_FP_less(fx, sqx)) {
       _unur_warning(gen->genid,UNUR_ERR_GEN_CONDITION,"PDF < squeeze. Not T-concave!");
+#ifdef UNUR_ENABLE_LOGGING
       error = 1;
+#endif
     }
 
 #ifdef UNUR_ENABLE_LOGGING
@@ -381,7 +389,7 @@ _unur_tdr_ps_eval_invcdfhat( const struct unur_gen *gen, double U,
 
   default:
     _unur_error(gen->genid,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
 
   } /* end switch */
 
@@ -398,7 +406,7 @@ _unur_tdr_ps_eval_invcdfhat( const struct unur_gen *gen, double U,
     case TDR_VAR_T_POW:
       /** TODO **/
     default:
-      *hx = INFINITY;
+      *hx = UNUR_INFINITY;
     } /* end switch */
 
   /** -3- Evaluate density at X **/
@@ -452,7 +460,7 @@ _unur_tdr_ps_improve_hat( struct unur_gen *gen, struct unur_tdr_interval *iv,
     /* condition for PDF is violated! */
     _unur_error(gen->genid,UNUR_ERR_GEN_CONDITION,"");
     if (gen->variant & TDR_VARFLAG_PEDANTIC || result == UNUR_ERR_ROUNDOFF) {
-      /* replace sampling routine by dummy routine that just returns INFINITY */
+      /* replace sampling routine by dummy routine that just returns UNUR_INFINITY */
       SAMPLE = _unur_sample_cont_error;
       return UNUR_ERR_GEN_CONDITION;
     }

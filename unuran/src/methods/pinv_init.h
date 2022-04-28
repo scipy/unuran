@@ -35,7 +35,6 @@ _unur_pinv_init( struct unur_par *par )
      /*----------------------------------------------------------------------*/
 { 
   struct unur_gen *gen;
-  double lfc;
 
   /* check arguments */
   _unur_check_NULL( GENTYPE,par,NULL );
@@ -56,28 +55,30 @@ _unur_pinv_init( struct unur_par *par )
     _unur_pinv_free(gen); return NULL;
   }
 
-  /* compute rescaling factor for PDF */
-  /* (only used when logPDF is given) */
-  if (DISTR.logpdf != NULL && (gen->variant & PINV_VARIANT_PDF) ) {
-    lfc = UNUR_INFINITY;
+  /* compute rescaling factor for PDF          */
+  /* (only used when logPDF is given)          */
+  /* Disabled!                                 */
+  /* We found that it is not such a good idea. */
+  /* if (DISTR.logpdf != NULL && (gen->variant & PINV_VARIANT_PDF) ) { */
+  /*   double lfc = UNUR_UNUR_INFINITY; */
 
-    /* use mode if available */
-    if ( (gen->distr->set & UNUR_DISTR_SET_MODE) &&
-	 !_unur_FP_less(DISTR.mode,DISTR.domain[0]) &&
-	 !_unur_FP_greater(DISTR.mode,DISTR.domain[1]) ) {
-      lfc = (DISTR.logpdf)(DISTR.mode,gen->distr);
-    }
+  /*   /\* use mode if available *\/ */
+  /*   if ( (gen->distr->set & UNUR_DISTR_SET_MODE) && */
+  /* 	 !_unur_FP_less(DISTR.mode,DISTR.domain[0]) && */
+  /* 	 !_unur_FP_greater(DISTR.mode,DISTR.domain[1]) ) { */
+  /*     lfc = (DISTR.logpdf)(DISTR.mode,gen->distr); */
+  /*   } */
 
-    /* use center otherwise (or if logPDF(mode)==INFINITY) */ 
-    if (!_unur_isfinite(lfc))
-      lfc = (DISTR.logpdf)(DISTR.center,gen->distr);
+  /*   /\* use center otherwise (or if logPDF(mode)==UNUR_INFINITY) *\/ */
+  /*   if (!_unur_isfinite(lfc)) */
+  /*     lfc = (DISTR.logpdf)(DISTR.center,gen->distr); */
 
-    /* rescaling results in more evaluations of the logPDF, */
-    /* when the logPDF is approximately 0.                  */
-    /* so we only rescale the logPDF when it is too small.  */
-    if (lfc < -3.)
-      GEN->logPDFconstant = lfc;
-  }
+  /*   /\* rescaling results in more evaluations of the logPDF, *\/ */
+  /*   /\* when the logPDF is approximately 0.                  *\/ */
+  /*   /\* so we only rescale the logPDF when it is too small.  *\/ */
+  /*   if (lfc < -3.) */
+  /*     GEN->logPDFconstant = lfc; */
+  /* } */
 
 #ifdef UNUR_ENABLE_LOGGING
   /* write info into LOG file */
@@ -194,15 +195,15 @@ _unur_pinv_create( struct unur_par *par )
   /* initialize variables */
   GEN->bleft = GEN->bleft_par;
   GEN->bright = GEN->bright_par;
-  GEN->dleft = -INFINITY;
-  GEN->dright = INFINITY;
+  GEN->dleft = -UNUR_INFINITY;
+  GEN->dright = UNUR_INFINITY;
   GEN->Umax = 1.;
   GEN->iv = NULL;
   GEN->n_ivs = -1;        /* -1 indicates that there are no intervals at all */
   GEN->guide_size = 0; 
   GEN->guide = NULL;
   GEN->area = DISTR.area; /* we use the value in the distribution object as first guess */
-  GEN->logPDFconstant = 0.;   /* rescaling constant for logPDF                  */
+  /* GEN->logPDFconstant = 0.; rescaling constant for logPDF: Disabled */
   GEN->aCDF = NULL;           /* pointer to approximate CDF */
 
   /* allocate maximal array of intervals */
@@ -238,18 +239,18 @@ _unur_pinv_check_par( struct unur_gen *gen )
   switch (GEN->smooth) {
   case 2:
     if (GEN->order < 5) {
-      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be >= 5 when smoothness equals 2");
+      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be >= 5 when smoothness = 2");
       GEN->order = 5;
       gen->set |= PINV_SET_ORDER_COR;
     }
     if (GEN->order % 3 != 2) {
-      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be 2 mod 3 when smoothness equals 2");
+      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be 2 mod 3 when smoothness = 2");
       GEN->order = 2 + 3 * (GEN->order / 3);
       gen->set |= PINV_SET_ORDER_COR;
     }
 
     if (DISTR.pdf == NULL || DISTR.dpdf == NULL) {
-      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF or dPDF --> try smoothness=1 instead");
+      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF and dPDF required for smoothness = 2 --> try smoothness=1 instead");
       GEN->smooth = 1;
       gen->set |= PINV_SET_SMOOTH_COR;
     }
@@ -259,12 +260,12 @@ _unur_pinv_check_par( struct unur_gen *gen )
 
   case 1:
     if (GEN->order % 2 != 1) {
-      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be odd when smoothness equals 1");
+      _unur_warning(gen->genid,UNUR_ERR_GENERIC,"order must be odd when smoothness = 1");
       GEN->order += 1;
       gen->set |= PINV_SET_ORDER_COR;
     }
     if (DISTR.pdf == NULL) {
-      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF --> use smoothness=0 instead");
+      _unur_warning(gen->genid,UNUR_ERR_DISTR_REQUIRED,"PDF required --> use smoothness=0 instead");
       GEN->smooth = 0;
       gen->set |= PINV_SET_SMOOTH_COR;
     }
@@ -472,7 +473,7 @@ double
 _unur_pinv_eval_PDF (double x, struct unur_gen *gen)
      /*----------------------------------------------------------------------*/
      /* call to PDF.                                                         */
-     /* if PDF(x) == INFINITY (i.e., x is a pole of the PDF)                 */
+     /* if PDF(x) == UNUR_INFINITY (i.e., x is a pole of the PDF)            */
      /* we compute PDF(x+dx) for a small dx instead.                         */
      /*                                                                      */
      /* parameters:                                                          */
@@ -492,13 +493,16 @@ _unur_pinv_eval_PDF (double x, struct unur_gen *gen)
     /* one time for given x, the second time for x+dx. */
 
     /* compute PDF(x) */
-    if (DISTR.logpdf != NULL)
-      fx = exp((DISTR.logpdf)(x,distr) - GEN->logPDFconstant);
+    if (DISTR.logpdf != NULL) {
+      fx = exp((DISTR.logpdf)(x,distr));
+      /* scaling factor Disabled! */
+      /* fx = exp((DISTR.logpdf)(x,distr) - GEN->logPDFconstant); */
+    }
     else
       fx = (DISTR.pdf)(x,distr);
 
-    /* check for pole (i.e., PDF(x)==INFINITY) */
-    if (fx >= INFINITY) {
+    /* check for pole (i.e., PDF(x)==UNUR_INFINITY) */
+    if (fx >= UNUR_INFINITY) {
       /* pole at x --> move x slightly */
       dx = 2.*fabs(x)*DBL_EPSILON;
       dx = _unur_max(dx,2.*DBL_MIN);

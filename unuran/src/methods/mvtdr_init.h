@@ -166,7 +166,7 @@ _unur_mvtdr_create( struct unur_par *par )
     /*     WARNING( "number of cones raised to 2^(dim + T_STEPS_MIN)" ); */
     PAR->max_cones = 1 << (GEN->dim + GEN->steps_min);
   }
-  GEN->max_gamma = INFINITY;            /* upper bound for gamma variaties */
+  GEN->max_gamma = UNUR_INFINITY;       /* upper bound for gamma variaties */
 
   /* initialize  pointers to lists */
   GEN->cone = NULL;
@@ -688,7 +688,7 @@ _unur_mvtdr_cone_new( struct unur_gen *gen )
 
   /* mark as invalid */
   c->tp = -1.;
-  c->Hi = INFINITY;
+  c->Hi = UNUR_INFINITY;
 
   /* and update counter */
   ++(GEN->n_cone);
@@ -829,7 +829,7 @@ _unur_mvtdr_cone_params( struct unur_gen *gen, CONE *c )
 
   /* this is expensive for calculation for every touching point !!! */
   /* Maybe we only perform this computation when at the very end    */
-  /* and use height=INFINITY for finding construction points.       */
+  /* and use height=UNUR_INFINITY for finding construction points.  */
   if (_unur_mvtdr_cone_height(gen,c) != UNUR_SUCCESS) 
     return UNUR_FAILURE;
 
@@ -851,8 +851,8 @@ _unur_mvtdr_cone_logH( struct unur_gen *gen, CONE *c )
      /*                                                                      */
      /* return:                                                              */
      /*   success               ... logarithm of volume below hat            */
-     /*   PDF(tp)==0            ... -INFINITY                                */
-     /*   error(hat unbounded?) ... +INFINITY                                */
+     /*   PDF(tp)==0            ... -UNUR_INFINITY                           */
+     /*   error(hat unbounded?) ... +UNUR_INFINITY                           */
      /*----------------------------------------------------------------------*/
 {
   double logH;
@@ -863,10 +863,10 @@ _unur_mvtdr_cone_logH( struct unur_gen *gen, CONE *c )
     break;
   case UNUR_ERR_DISTR_DOMAIN:
     /* construction point out of support */
-    return -INFINITY;
+    return -UNUR_INFINITY;
   default:
     /* something is wrong: beta = 0 and/or <g,v> <= 0 */
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
   /* compute log of volume below hat */
@@ -880,13 +880,13 @@ _unur_mvtdr_cone_logH( struct unur_gen *gen, CONE *c )
     /* It could be omitted if 'c->beta*c->height' is     */
     /* large (not too small).                            */
     if (c->height < 1.e-50) 
-      return -INFINITY;
+      return -UNUR_INFINITY;
     else
       logH += log(_unur_SF_incomplete_gamma(c->beta*c->height,(double)GEN->dim));
   }
 
   /* check for numerical errors (alpha or beta too small) */
-  return (_unur_isfinite(logH)) ? logH : INFINITY;
+  return (_unur_isfinite(logH)) ? logH : UNUR_INFINITY;
 
 } /* end of _unur_mvtdr_cone_logH() */
 
@@ -1162,7 +1162,7 @@ _unur_mvtdr_max_gamma( struct unur_gen *gen )
   CONE *c;
 
   if (!GEN->has_domain) {
-    GEN->max_gamma = INFINITY;
+    GEN->max_gamma = UNUR_INFINITY;
   }
   else {
     max = 0.;
@@ -1170,7 +1170,7 @@ _unur_mvtdr_max_gamma( struct unur_gen *gen )
       tmp = c->height * c->beta;
       max = _unur_max(max, tmp);
     }
-    GEN->max_gamma = (max > 0.) ? max : INFINITY;
+    GEN->max_gamma = (max > 0.) ? max : UNUR_INFINITY;
   }
 
   return UNUR_SUCCESS;
@@ -1206,7 +1206,7 @@ _unur_mvtdr_tp_min (double t, void *p )
   /* status of result */
   switch (_unur_isinf(a->logH)) {
   case -1:
-    a->logH = INFINITY;
+    a->logH = UNUR_INFINITY;
     a->status = MVTDR_CONE_DOMAIN;
     break;
   case 1:
@@ -1757,7 +1757,7 @@ _unur_mvtdr_etable_new( struct unur_gen *gen, int size )
   GEN->etable_size = size;
 
   /* make root */
-  GEN->etable = malloc( size * sizeof(E_TABLE*) );
+  GEN->etable = _unur_xmalloc( size * sizeof(E_TABLE*) );
   if (GEN->etable==NULL) {
     _unur_error(gen->genid,UNUR_ERR_MALLOC,""); return UNUR_ERR_MALLOC; }
 

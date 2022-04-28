@@ -208,7 +208,6 @@
 #include <unur_source.h>
 #include <distr/distr_source.h>
 #include <distr/cont.h>
-#include <specfunct/unur_specfunct_source.h>
 #include "unur_distributions.h"
 #include "unur_distributions_source.h"
 #include "unur_stddistr.h"
@@ -302,7 +301,7 @@ _unur_cdf_burr( double x, const UNUR_DISTR *distr )
 
   default:
     _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
 } /* end of _unur_cdf_burr() */
@@ -365,7 +364,7 @@ _unur_invcdf_burr( double U, const UNUR_DISTR *distr )
   case UNUR_DISTR_BURR_XI:
   default:
     _unur_error(distr_name,UNUR_ERR_SHOULD_NOT_HAPPEN,"");
-    return INFINITY;
+    return UNUR_INFINITY;
   }
 
 } /* end of _unur_invcdf_burr() */
@@ -433,8 +432,10 @@ _unur_set_params_burr( UNUR_DISTR *distr, const double *params, int n_params )
   switch (n_params) {
   case 3:
     DISTR.c = c;
+    /* FALLTHROUGH */
   case 2:
     DISTR.k = k;
+    /* FALLTHROUGH */
   default:
     break;
   }
@@ -444,8 +445,8 @@ _unur_set_params_burr( UNUR_DISTR *distr, const double *params, int n_params )
 
   /* set (standard) domain */
   if (distr->set & UNUR_DISTR_SET_STDDOMAIN) {
-    DISTR.domain[0] = -INFINITY;  /* left boundary  */
-    DISTR.domain[1] = INFINITY;   /* right boundary */
+    DISTR.domain[0] = -UNUR_INFINITY;  /* left boundary  */
+    DISTR.domain[1] = UNUR_INFINITY;   /* right boundary */
 
     switch (distr->id) {
     case UNUR_DISTR_BURR_I:

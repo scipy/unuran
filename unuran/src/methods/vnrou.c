@@ -526,8 +526,8 @@ unur_vnrou_get_volumehat( const struct unur_gen *gen )
   int d;
 
   /* check arguments */
-  _unur_check_NULL( GENTYPE, gen, INFINITY );
-  _unur_check_gen_object( gen, VNROU, INFINITY );
+  _unur_check_NULL( GENTYPE, gen, UNUR_INFINITY );
+  _unur_check_gen_object( gen, VNROU, UNUR_INFINITY );
 
   /* compute volume of bounding rectangle */
   vol = GEN->vmax;  

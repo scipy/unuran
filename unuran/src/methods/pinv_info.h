@@ -155,7 +155,7 @@ _unur_pinv_info( struct unur_gen *gen, int help )
     _unur_string_append(info,"\n");
   }
 
-} /* end of _unur_tdr_info() */
+} /* end of _unur_pinv_info() */
 
 /*---------------------------------------------------------------------------*/
 #endif   /* end UNUR_ENABLE_INFO */

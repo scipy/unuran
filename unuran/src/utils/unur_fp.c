@@ -166,7 +166,7 @@ _unur_isfinite (const double x)
 #elif defined(_MSC_VER) /* Microsoft Visual C++ */
   return (_finite(x) ? TRUE : FALSE);
 #elif HAVE_IEEE_COMPARISONS
-  if (x < INFINITY && x > -INFINITY)
+  if (x < UNUR_INFINITY && x > -UNUR_INFINITY)
     return TRUE;
   else
     return FALSE;
@@ -239,9 +239,9 @@ _unur_isinf (const double x)
   else 
     return 0;
 #elif HAVE_IEEE_COMPARISONS
-  if (x>=INFINITY)
+  if (x>=UNUR_INFINITY)
     return 1;
-  else if (x<=-INFINITY)
+  else if (x<=-UNUR_INFINITY)
     return -1;
   else
     return 0;
