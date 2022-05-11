@@ -17,8 +17,7 @@
  *   Translated into C and adapted for UNU.RAN by Roman Karawatzki.          *
  *****************************************************************************
  *                                                                           *
- *   Copyright (c) 2000-2006 Wolfgang Hoermann and Josef Leydold             *
- *   Department of Statistics and Mathematics, WU Wien, Austria              *
+
  *                                                                           *
 
  *                                                                           *
