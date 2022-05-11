@@ -6,7 +6,11 @@
  *****************************************************************************
 
 
-UNU.RAN  is an ANSI C library licensed under GPL. 
+UNU.RAN is an ANSI C library.
+
+Note: the following version was re-licensed to the BSD license of SciPy.
+See license.txt for more details.
+
 It contains universal (also called automatic or black-box) algorithms
 that can generate random numbers from large classes of continuous or
 discrete distributions, and also from practically all standard
