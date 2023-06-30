@@ -127,7 +127,8 @@ def _download_unuran(version: str, logger: logging.Logger) -> None:
                 shutil.rmtree(base / "unuran" / dir_to_remove)
 
         # Unwanted files.
-        files_to_remove = ["src/unuran.h.in", "acinclude.m4", "aclocal.m4", "autogen.sh", "configure", "COPYING", "INSTALL", "NEWS", "UPGRADE"]
+        files_to_remove = ["src/unuran.h.in", "acinclude.m4", "aclocal.m4", "autogen.sh", "configure",
+                           "COPYING", "INSTALL", "NEWS", "UPGRADE", "src/specfunct/log1p.c"]
         for file_to_remove in files_to_remove:
             if (base / "unuran" / file_to_remove).exists():
                 os.remove(base / "unuran" / file_to_remove)
