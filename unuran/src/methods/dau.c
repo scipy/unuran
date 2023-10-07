@@ -103,6 +103,10 @@
 #include "dau.h"
 #include "dau_struct.h"
 
+#ifndef FLT_EPSILON
+#define FLT_EPSILON 1.19209290e-7F
+#endif
+
 /*---------------------------------------------------------------------------*/
 /* Variants: none                                                            */
 
